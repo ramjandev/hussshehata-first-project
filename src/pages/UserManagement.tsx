@@ -8,13 +8,8 @@ import AllClients from "@/components/userManagement/AllClients";
 import AllCoached from "@/components/userManagement/AllCoached";
 import AllUsers from "@/components/userManagement/AllUsers";
 import ClientAndCoached from "@/components/userManagement/ClientAndCoached";
-import Tracking from "@/components/userManagement/Tracking";
 import UserSearchBar from "@/components/userManagement/UserSearchBar";
-import {
-  useGetUserActivityQuery,
-  useGetUserManagementQuery,
-} from "@/store/features/program/programAPI";
-import type { ActivityTrackingResponse } from "@/store/features/program/types/activity";
+import { useGetUserManagementQuery } from "@/store/features/program/programAPI";
 import type { UserType } from "@/store/features/program/types/review";
 import { Activity, Crown, UserPlus, Users } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -23,13 +18,7 @@ import UserTabs from "./UserTabs";
 const UserManagement = () => {
   const [activeTab, setActiveTab] = useState("All Users");
 
-  const tabs = [
-    "All Users",
-    "Clients",
-    "Coaches",
-    "Coached Client",
-    "Activity Tracking",
-  ];
+  const tabs = ["All Users", "Clients", "Coaches", "Coached Client"];
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -93,30 +82,6 @@ const UserManagement = () => {
 
   const list = new Array(4).fill(null);
 
-  const { data: activity } = useGetUserActivityQuery();
-  const activityStats = [
-    {
-      icon: Users,
-      iconBgColor: "bg-purple-100",
-      iconColor: "text-purple-600",
-      value: dashboardData?.totalUserCount ?? 0,
-      title: "Workouts Completed (Today)",
-    },
-    {
-      icon: Activity,
-      iconBgColor: "bg-green-100",
-      iconColor: "text-green-600",
-      value: dashboardData?.totalActiveUser ?? 0,
-      title: "Active Sessions",
-    },
-    {
-      icon: Activity,
-      iconBgColor: "bg-cyan-100",
-      iconColor: "text-cyan-600",
-      value: "42m",
-      title: "Avg. Session Time",
-    },
-  ];
   return (
     <div className=" space-y-6">
       <DashboardTopSection
@@ -127,18 +92,16 @@ const UserManagement = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {isLoading
           ? list.map((_, index) => <DashboardCardSkeleton key={index} />)
-          : (activeTab === "Activity Tracking" ? activityStats : statsData).map(
-              (stat) => (
-                <CommonCard
-                  key={stat.title}
-                  icon={stat.icon}
-                  iconBgColor={stat.iconBgColor}
-                  iconColor={stat.iconColor}
-                  value={stat.value}
-                  title={stat.title}
-                />
-              ),
-            )}
+          : statsData.map((stat) => (
+              <CommonCard
+                key={stat.title}
+                icon={stat.icon}
+                iconBgColor={stat.iconBgColor}
+                iconColor={stat.iconColor}
+                value={stat.value}
+                title={stat.title}
+              />
+            ))}
       </div>
 
       <div className="w-full">
@@ -170,9 +133,9 @@ const UserManagement = () => {
             <ClientAndCoached users={allUsers} />
           )}
 
-          {activeTab === "Activity Tracking" && (
+          {/* {activeTab === "Activity Tracking" && (
             <Tracking activity={activity as ActivityTrackingResponse} />
-          )}
+          )} */}
 
           {data?.data.data && data?.data?.data?.length > 1 && (
             <Pagination
