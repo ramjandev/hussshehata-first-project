@@ -3,7 +3,7 @@ import { useGetallProgramQuery } from "@/store/features/program/programAPI";
 import ProgramCard from "../reuseable/ProgramCard";
 
 const HomePageContent = () => {
-  const { data, isLoading } = useGetallProgramQuery();
+  const { data, isLoading } = useGetallProgramQuery({});
   const programs = data?.data?.data || [];
   const list = new Array(10).fill(null);
   return (
@@ -26,8 +26,6 @@ const HomePageContent = () => {
                     <div className="text-xs">↓</div>
                   </div>
                 }
-                onDelete={() => {}}
-                onEdit={() => {}}
                 iconAction={() => {}}
               />
             </div>

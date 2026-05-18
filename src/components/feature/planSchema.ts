@@ -2,9 +2,8 @@ import { z } from "zod";
 
 export const PlanEnum = z.enum(["FREE", "MONTHLY", "ANNUAL"]);
 
-// API schema — features stays string[] for the backend
 const baseSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(1, "Name is required").optional(),
   plan: PlanEnum,
   priceUSD: z.number().min(0, "Price must be positive"),
   features: z.array(z.string().min(1, "Feature required")),
@@ -49,3 +48,13 @@ export const planFormSchema = z.object({
   savingsPercent: z.number().nullable().optional(),
   isPopular: z.boolean().optional(),
 });
+
+export type UpdatePlanPayload = {
+  name?: string;
+  priceUSD: number;
+  features: string[];
+  isActive: boolean;
+  billingPeriod?: "MONTHLY" | "ANNUAL";
+  savingsPercent?: number;
+  isPopular?: boolean;
+};

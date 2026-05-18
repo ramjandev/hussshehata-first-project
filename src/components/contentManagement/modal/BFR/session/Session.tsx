@@ -24,7 +24,7 @@ const Session: React.FC<SessionProps> = ({
   selectBfr,
 }) => {
   const { data: bfrData, isLoading } = useGetBFRQuery({});
-  const bfrSessions = bfrData?.data?.data ?? [];
+  const bfrSessions = bfrData?.data ?? [];
   const list = new Array(10).fill(null);
 
   const [deleteBFR] = useDeleteBFRMutation();

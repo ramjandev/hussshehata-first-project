@@ -1,20 +1,14 @@
 import SectionHeader from "@/common/button/SectionHeader";
+import {
+  useProgramPerformanceQuery,
+  useUserDistributionQuery,
+} from "@/store/features/premium/premiumFeature";
 
-const programs = [
-  {
-    name: "10-Week Monster Confusion (Classic)",
-    enrolled: 456,
-    completion: 75,
-  },
-  {
-    name: "10-Week Monster Confusion (Modernized)",
-    enrolled: 456,
-    completion: 75,
-  },
-  { name: "HUSS 8-Week Beast", enrolled: 456, completion: 75 },
-  { name: "2-2-2 Method", enrolled: 456, completion: 75 },
-];
 const UserAndProgram = () => {
+  const { data } = useUserDistributionQuery();
+  const { data: programData } = useProgramPerformanceQuery();
+
+  const programs = programData?.data ?? [];
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="bg-white text-black rounded-2xl p-6">
@@ -74,28 +68,36 @@ const UserAndProgram = () => {
               <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
               <span className="text-sm text-gray-600">Premium Users</span>
             </div>
-            <p className="text-2xl font-bold ml-5">1050</p>
+            <p className="text-2xl font-bold ml-5">
+              {data?.data?.premiumUsers || 0}
+            </p>
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
               <span className="text-sm text-gray-600">Free Users</span>
             </div>
-            <p className="text-2xl font-bold ml-5">2370</p>
+            <p className="text-2xl font-bold ml-5">
+              {data?.data?.freeUsers || 0}
+            </p>
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span className="text-sm text-gray-600">Trial Users</span>
+              <span className="text-sm text-gray-600">Total Users</span>
             </div>
-            <p className="text-2xl font-bold ml-5">245</p>
+            <p className="text-2xl font-bold ml-5">
+              {data?.data?.totalUsers || 0}
+            </p>
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
               <span className="text-sm text-gray-600">Expired</span>
             </div>
-            <p className="text-2xl font-bold ml-5">156</p>
+            <p className="text-2xl font-bold ml-5">
+              {data?.data?.expiredUsers || 0}
+            </p>
           </div>
         </div>
       </div>
@@ -110,20 +112,22 @@ const UserAndProgram = () => {
           {programs.map((program, index) => (
             <div key={index}>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium">{program.name}</span>
+                <span className="text-sm font-medium">
+                  {program.programName}
+                </span>
                 <div className="text-right">
                   <span className="text-sm text-gray-600">
-                    {program.enrolled} enrolled
+                    {program.enrolledUserCount} enrolled
                   </span>
                   <span className="text-sm text-gray-400 ml-4">
-                    {program.completion}%
+                    {program.completionPercentage}%
                   </span>
                 </div>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full"
-                  style={{ width: `${program.completion}%` }}
+                  style={{ width: `${program.completionPercentage}%` }}
                 ></div>
               </div>
             </div>

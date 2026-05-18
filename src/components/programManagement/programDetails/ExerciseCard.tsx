@@ -126,7 +126,6 @@ const ExerciseCard: React.FC<ExerciseProps> = ({ exercise, index }) => {
                 </p>
               )}
 
-              {/* Video animation */}
               {exercise.animation && (
                 <video
                   src={exercise.animation}

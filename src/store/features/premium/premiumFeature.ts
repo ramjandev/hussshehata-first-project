@@ -1,6 +1,19 @@
-import type { CreatePlanPayload } from "@/components/feature/planSchema";
+import type {
+  CreatePlanPayload,
+  UpdatePlanPayload,
+} from "@/components/feature/planSchema";
 import { baseAPI } from "@/store/baseApi/baseApi";
-import type { SubscriptionPlansApiResponse } from "./types/premium";
+import type {
+  DashboardCardsResponse,
+  ProgramPerformanceResponse,
+  RecentTransactionsResponse,
+  RevenueSubscriptionsTrendResponse,
+  SubscriptionOverviewResponse,
+  SubscriptionPlansApiResponse,
+  SubscriptionQueryParams,
+  UserDistributionResponse,
+  UserGrowthResponse,
+} from "./types/premium";
 
 export const PremiumAPI = baseAPI.injectEndpoints({
   endpoints: (build) => ({
@@ -19,7 +32,7 @@ export const PremiumAPI = baseAPI.injectEndpoints({
       }),
       invalidatesTags: ["plans"],
     }),
-    updatePlans: build.mutation<void, { id: string; data: CreatePlanPayload }>({
+    updatePlans: build.mutation<void, { id: string; data: UpdatePlanPayload }>({
       query: ({ id, data }) => ({
         url: `/admin/subscription-plans/${id}`,
         method: "PATCH",
@@ -34,6 +47,55 @@ export const PremiumAPI = baseAPI.injectEndpoints({
       }),
       invalidatesTags: ["plans"],
     }),
+    getSubscriptionStart: build.query<SubscriptionOverviewResponse, void>({
+      query: () => ({
+        url: `/admin-dashboard-analytics/subscription-overview`,
+        method: "GET",
+      }),
+      providesTags: ["subscription"],
+    }),
+    recentTransactions: build.query<
+      RecentTransactionsResponse,
+      SubscriptionQueryParams
+    >({
+      query: (params) => ({
+        url: `/admin-dashboard-analytics/recent-transactions`,
+        method: "GET",
+        params,
+      }),
+      providesTags: ["subscription"],
+    }),
+    getDashboardStart: build.query<DashboardCardsResponse, void>({
+      query: () => ({
+        url: `/admin-dashboard-analytics/dashboard-cards`,
+        method: "GET",
+      }),
+      providesTags: ["dashboard"],
+    }),
+    userDistribution: build.query<UserDistributionResponse, void>({
+      query: () => ({
+        url: `/admin-dashboard-analytics/user-distribution`,
+        method: "GET",
+      }),
+    }),
+    programPerformance: build.query<ProgramPerformanceResponse, void>({
+      query: () => ({
+        url: `/admin-dashboard-analytics/program-performance`,
+        method: "GET",
+      }),
+    }),
+    userGrowth: build.query<UserGrowthResponse, void>({
+      query: () => ({
+        url: `/admin-dashboard-analytics/user-growth`,
+        method: "GET",
+      }),
+    }),
+    revenueGrowth: build.query<RevenueSubscriptionsTrendResponse, void>({
+      query: () => ({
+        url: `/admin-dashboard-analytics/revenue-subscriptions-trend`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -42,4 +104,14 @@ export const {
   useCreatePlansMutation,
   useUpdatePlansMutation,
   useDeletePlansMutation,
+  //payment
+  useGetSubscriptionStartQuery,
+  useRecentTransactionsQuery,
+
+  //dashboard
+  useGetDashboardStartQuery,
+  useUserDistributionQuery,
+  useProgramPerformanceQuery,
+  useUserGrowthQuery,
+  useRevenueGrowthQuery,
 } = PremiumAPI;

@@ -38,6 +38,9 @@ const programSlice = createSlice({
         ...action.payload,
       } as ProgramPayload;
     },
+    clearProgram: (state) => {
+      state.program = null;
+    },
   },
 });
 
@@ -48,6 +51,7 @@ export const {
   updateProgram,
   next,
   prev,
+  clearProgram,
 } = programSlice.actions;
 
 export default programSlice.reducer;

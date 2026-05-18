@@ -84,16 +84,19 @@ const UpdateSetsModal = ({ isOpen, onClose, selectSet, onSave }: Props) => {
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-xl rounded-xl relative">
+      <div className="bg-white w-full max-w-2xl rounded-xl relative">
         <div className="flex justify-between px-6 pt-6">
           <CommonHeader size="lg" className="text-gray-900">
             Update Exercise Sets
           </CommonHeader>
           <CloseButton action={onClose} />
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4 p-6 w-full "
+        >
           {fields.map((field, index) => (
-            <div key={field.id} className="grid grid-cols-4 gap-3">
+            <div key={field.id} className="grid grid-cols-4 gap-3 w-full ">
               <div className="flex items-end pb-3">
                 <span className="text-sm font-medium text-gray-700">
                   Set {index + 1}
@@ -145,7 +148,7 @@ const UpdateSetsModal = ({ isOpen, onClose, selectSet, onSave }: Props) => {
 
           <button
             type="button"
-            onClick={() => append({ reps: "", rest: 60, weight: 0 })}
+            onClick={() => append({ reps: "20", rest: 60, weight: 0 })}
             className="text-sm text-blue font-medium cursor-pointer"
           >
             + Add Set

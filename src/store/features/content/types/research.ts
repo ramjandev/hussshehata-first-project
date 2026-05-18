@@ -12,26 +12,16 @@ export interface ResearchEducation {
   researchCategory: "BASIC" | "ADVANCED" | "DETAIL";
   isActive: boolean;
   sortOrder: number;
-  createdAt: string; // ISO 8601 date string
-  updatedAt: string; // ISO 8601 date string
+  createdAt: string;
+  updatedAt: string;
 }
 
-// Inner data wrapper
-interface ResearchEducationData {
+export interface ResearchEducationApiResponse {
   success: boolean;
   data: ResearchEducation[];
   timestamp: string;
   path: string;
-  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-}
-
-// Outer response wrapper
-export interface ResearchEducationApiResponse {
-  success: boolean;
-  data: ResearchEducationData;
-  timestamp: string;
-  path: string;
-  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+  method: string;
 }
 
 //single

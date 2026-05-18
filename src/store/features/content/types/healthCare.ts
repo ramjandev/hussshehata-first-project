@@ -22,19 +22,10 @@ interface InnerDataWrapper {
   data: HealthMarkerItem[];
 }
 
-// Outer data wrapper
-interface DataWrapper {
-  success: boolean;
-  data: InnerDataWrapper;
-  timestamp: string;
-  path: string;
-  method: string;
-}
-
 // Root response type
 export interface HealthMarkersResponse {
   success: boolean;
-  data: DataWrapper;
+  data: InnerDataWrapper;
   timestamp: string;
   path: string;
   method: string;

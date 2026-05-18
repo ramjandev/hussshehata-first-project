@@ -5,9 +5,13 @@ import { baseAPI } from "@/store/baseApi/baseApi";
 import type { ActivityTrackingResponse } from "./types/activity";
 import type { ProgrammesResponse } from "./types/allProgram";
 import type { ProgramAnalyticsResponse, ProgramParams } from "./types/analytic";
-import type { SingleExerciseResponse } from "./types/exercise";
+import type { SingleExerciseResponse, WeekBody } from "./types/exercise";
 import type { MethodPayload, TrainingMethodsResponse } from "./types/method";
-import type { ProgramPayload, SingleProgramResponse } from "./types/newProgram";
+import type {
+  ProgramPayload,
+  ProgramStatusParams,
+  SingleProgramResponse,
+} from "./types/newProgram";
 import type { GetUsersParams, userManagementResponse } from "./types/review";
 
 export const programAPI = baseAPI.injectEndpoints({
@@ -20,10 +24,11 @@ export const programAPI = baseAPI.injectEndpoints({
       }),
       invalidatesTags: ["programs"],
     }),
-    getallProgram: build.query<ProgrammesResponse, void>({
-      query: () => ({
+    getallProgram: build.query<ProgrammesResponse, ProgramStatusParams>({
+      query: (params) => ({
         url: `/updated-programme/get-all-programmes`,
         method: "GET",
+        params,
       }),
       providesTags: ["programs"],
     }),
@@ -33,6 +38,14 @@ export const programAPI = baseAPI.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["programs"],
+    }),
+
+    publishProgram: build.mutation<any, string>({
+      query: (id) => ({
+        url: `updated-programme/publish-programme/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["programs"],
     }),
     postMethod: build.mutation<any, MethodPayload>({
       query: (data) => ({
@@ -112,6 +125,7 @@ export const programAPI = baseAPI.injectEndpoints({
         url: `/new-exercise/${id}`,
         method: "GET",
       }),
+      providesTags: ["exercises"],
     }),
     addImage: build.mutation<void, { id: string; data: FormData }>({
       query: (data) => ({
@@ -119,7 +133,7 @@ export const programAPI = baseAPI.injectEndpoints({
         method: "PATCH",
         body: data.data,
       }),
-      invalidatesTags: ["programs"],
+      invalidatesTags: ["programs", "exercises"],
     }),
     AddAnimation: build.mutation<void, { id: string; data: FormData }>({
       query: (data) => ({
@@ -127,7 +141,7 @@ export const programAPI = baseAPI.injectEndpoints({
         method: "PATCH",
         body: data.data,
       }),
-      invalidatesTags: ["programs"],
+      invalidatesTags: ["programs", "exercises"],
     }),
     updateExercise: build.mutation<
       void,
@@ -138,11 +152,41 @@ export const programAPI = baseAPI.injectEndpoints({
         method: "PATCH",
         body: data.data,
       }),
-      invalidatesTags: ["programs"],
+      invalidatesTags: ["programs", "exercises"],
     }),
     updateDay: build.mutation<void, { dayId: string; data: DayPayload }>({
       query: (data) => ({
         url: `/new-program-day/${data.dayId}`,
+        method: "PATCH",
+        body: data.data,
+      }),
+      invalidatesTags: ["programs"],
+    }),
+    premiumToggle: build.mutation<
+      void,
+      {
+        weekId: string;
+        data: WeekBody;
+      }
+    >({
+      query: (data) => ({
+        url: `/new-program-week/${data.weekId}`,
+        method: "PATCH",
+        body: data.data,
+      }),
+      invalidatesTags: ["programs"],
+    }),
+    AllPremiumToggle: build.mutation<
+      void,
+      {
+        programmeId: string;
+        data: {
+          status: boolean;
+        };
+      }
+    >({
+      query: (data) => ({
+        url: `/updated-programme/toggle-all-week-is-premium-field-using-program-id/${data.programmeId}`,
         method: "PATCH",
         body: data.data,
       }),
@@ -175,4 +219,7 @@ export const {
   //program
   useUpdateProgramBasicMutation,
   useDeleteProgramMutation,
+  usePublishProgramMutation,
+  usePremiumToggleMutation,
+  useAllPremiumToggleMutation,
 } = programAPI;

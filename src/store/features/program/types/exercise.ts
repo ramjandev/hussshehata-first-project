@@ -23,3 +23,8 @@ export interface Exercise {
   updatedAt: string;
   newTrainingMethodId: string | null;
 }
+
+export type WeekBody = {
+  isPremium: boolean;
+  name: string;
+};

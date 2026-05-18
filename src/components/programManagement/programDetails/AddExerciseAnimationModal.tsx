@@ -28,6 +28,7 @@ const AddExerciseAnimationModal = ({
 
   const [addAnimation, { isLoading }] = useAddAnimationMutation();
 
+  console.log("exercise", exercise?.data.animation);
   const handleVideoChange = (file: File | null) => {
     if (file) {
       setVideoFile(file);
@@ -56,7 +57,7 @@ const AddExerciseAnimationModal = ({
   };
 
   if (!isOpen) return null;
-  const animation = preview ?? exercise?.data.animation ?? undefined;
+  const animation = preview ?? exercise?.data?.animation;
   return (
     <ModalContainer title="Upload Exercise Animation" onClose={onClose}>
       <FileUpload

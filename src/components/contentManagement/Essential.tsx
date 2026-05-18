@@ -50,8 +50,8 @@ const Essential = () => {
       page,
       limit: 3,
     });
-  const partnerClinics = data?.data?.data || [];
-  const supplement = supplementData?.data?.data?.data || [];
+  const partnerClinics = data?.data || [];
+  const supplement = supplementData?.data?.data || [];
   const list = new Array(5).fill(null);
   const [deleteSupplement] = useDeleteSupplementMutation();
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -92,7 +92,7 @@ const Essential = () => {
     useGetHealthMarkersQuery({
       page: currentPage,
     });
-  const healthMarkersData = healthMarker?.data?.data.data ?? [];
+  const healthMarkersData = healthMarker?.data?.data ?? [];
 
   const [selectedHealthMarker, setSelectedHealthMarker] =
     useState<HealthMarkerItem | null>(null);
@@ -152,9 +152,9 @@ const Essential = () => {
 
             {healthMarkerLoading ? (
               list.map((_, index) => <DashboardCardSkeleton key={index} />)
-            ) : healthMarkersData.length > 0 ? (
+            ) : healthMarkersData?.length > 0 ? (
               <div className="space-y-3">
-                {healthMarkersData.map((marker) => (
+                {healthMarkersData?.map((marker) => (
                   <EssentialCard
                     name={marker.title}
                     list={marker.items}
@@ -169,7 +169,7 @@ const Essential = () => {
                 <div className="pt-4">
                   <Pagination
                     currentPage={currentPage}
-                    totalPages={healthMarker?.data.data.meta.totalPages || 1}
+                    totalPages={healthMarker?.data?.meta.totalPages || 1}
                     onPageChange={setCurrentPage}
                   />
                 </div>
@@ -178,31 +178,30 @@ const Essential = () => {
               <p className="text-center py-2">No health markers found</p>
             )}
           </div>
-
-          {isLoading ? (
-            <DashboardCardSkeleton />
-          ) : partnerClinics.length > 0 ? (
-            <div className=" bg-white p-6 rounded-lg ">
-              <div className="flex flex-col sm:flex-row justify-between items-stretch  sm:items-baseline-last  mb-4">
-                <div className="">
-                  <SectionHeader
-                    title="Partner Clinics Directory"
-                    description="Manage medical providers and diagnostic centers"
-                    className=""
-                  />
-                </div>
-
-                <CommonButton
-                  onClick={() => {
-                    setShowAddModal(true);
-                    setSelectPartner(null);
-                  }}
-                >
-                  <Plus size={20} />
-                  Add Clinic
-                </CommonButton>
+          <div className=" bg-white p-6 rounded-lg ">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch  sm:items-baseline-last  mb-4">
+              <div className="">
+                <SectionHeader
+                  title="Partner Clinics Directory"
+                  description="Manage medical providers and diagnostic centers"
+                  className=""
+                />
               </div>
 
+              <CommonButton
+                onClick={() => {
+                  setShowAddModal(true);
+                  setSelectPartner(null);
+                }}
+              >
+                <Plus size={20} />
+                Add Clinic
+              </CommonButton>
+            </div>
+
+            {isLoading ? (
+              <DashboardCardSkeleton />
+            ) : partnerClinics?.length > 0 ? (
               <div className="bg-white rounded-lg   overflow-hidden">
                 <div className=" w-full overflow-x-auto">
                   <table className={tableDesign.table}>
@@ -266,10 +265,10 @@ const Essential = () => {
                   </table>
                 </div>
               </div>
-            </div>
-          ) : (
-            <p>No clinics found</p>
-          )}
+            ) : (
+              <p className="text-center mt-2">No clinics found</p>
+            )}
+          </div>
         </>
       )}
       {activeEssentialType === "supplements" && (
@@ -287,98 +286,98 @@ const Essential = () => {
               { label: "Optional", value: "OPTIONAL" },
             ]}
           />
-
+          <div className="flex flex-col sm:flex-row justify-between  items-stretch  sm:items-center my-4">
+            <div>
+              <SectionHeader
+                title="Supplement Products"
+                description="Manage product catalog, pricing, and availability"
+              />
+            </div>
+            <CommonButton
+              onClick={() => {
+                setShowAddModal(true);
+                setSelectSupplement(null);
+              }}
+            >
+              <Plus size={20} />
+              Add Product
+            </CommonButton>
+          </div>
           <div>
             {supplementLoading ? (
               list.map((_, index) => <DashboardCardSkeleton key={index} />)
             ) : supplement.length > 0 ? (
-              <div className="flex flex-col sm:flex-row justify-between  items-stretch  sm:items-center my-4">
-                <div>
-                  <SectionHeader
-                    title="Supplement Products"
-                    description="Manage product catalog, pricing, and availability"
-                  />
-                </div>
-                <CommonButton
-                  onClick={() => {
-                    setShowAddModal(true);
-                    setSelectSupplement(null);
-                  }}
-                >
-                  <Plus size={20} />
-                  Add Product
-                </CommonButton>
+              <div className="grid grid-cols-1  lg:grid-cols-2  xl:grid-cols-3 gap-4">
+                {supplement.map((product) => (
+                  <div
+                    key={product.id}
+                    className="bg-white rounded-lg border border-gray-200 p-4"
+                  >
+                    <div className="relative mb-4">
+                      <div className=" h-16 w-16 bg-gray-100 rounded-lg flex items-center justify-center mb-3">
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="max-h-full"
+                        />
+                      </div>
+                      <span
+                        className={`absolute top-2 right-2 ${product.inStock ? "bg-[#DCFCE7] text-[#008236]" : "bg-red-100 text-red-700"}  px-2 py-1 rounded-full`}
+                      >
+                        {product.inStock ? "In stock" : "Out of stock"}
+                      </span>
+                    </div>
+                    <h4 className="font-bold mb-1">{product.name}</h4>
+                    <p className="text-sm text-gray-600 mb-2">
+                      Sold by: {product.vendorName}
+                    </p>
+                    <span className="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded mb-3">
+                      {product.category}
+                    </span>
+                    <ul className="text-xs text-gray-700 space-y-1 mb-3">
+                      {product.benefits.map((benefit, idx) => (
+                        <li key={idx} className="flex items-start gap-1">
+                          <span>✓</span>
+                          <span>{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="flex justify-between items-center">
+                      <span className="text-lg font-bold">
+                        ${product.price}
+                      </span>
+                      <div className="flex gap-2">
+                        <ActionButton
+                          variant="edit"
+                          editClassName=" !bg-white border border-darkPurple "
+                          onClick={() => {
+                            setSelectSupplement(product);
+                            setShowAddModal(true);
+                          }}
+                        >
+                          <Edit2 size={16} className="text-darkPurple" />
+                        </ActionButton>
+                        <ActionButton
+                          variant="delete"
+                          onClick={() => handleDeleteForSupplement(product.id)}
+                          isDelete={deletingId === product.id}
+                        >
+                          <Trash2 size={16} className="text-red-500" />
+                        </ActionButton>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <p className="text-center py-2">No products found</p>
             )}
-
-            <div className="grid grid-cols-1  lg:grid-cols-2  xl:grid-cols-3 gap-4">
-              {supplement.map((product) => (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-lg border border-gray-200 p-4"
-                >
-                  <div className="relative mb-4">
-                    <div className=" h-16 w-16 bg-gray-100 rounded-lg flex items-center justify-center mb-3">
-                      <img
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className="max-h-full"
-                      />
-                    </div>
-                    <span
-                      className={`absolute top-2 right-2 ${product.inStock ? "bg-[#DCFCE7] text-[#008236]" : "bg-red-100 text-red-700"}  px-2 py-1 rounded-full`}
-                    >
-                      {product.inStock ? "In stock" : "Out of stock"}
-                    </span>
-                  </div>
-                  <h4 className="font-bold mb-1">{product.name}</h4>
-                  <p className="text-sm text-gray-600 mb-2">
-                    Sold by: {product.vendorName}
-                  </p>
-                  <span className="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded mb-3">
-                    {product.category}
-                  </span>
-                  <ul className="text-xs text-gray-700 space-y-1 mb-3">
-                    {product.benefits.map((benefit, idx) => (
-                      <li key={idx} className="flex items-start gap-1">
-                        <span>✓</span>
-                        <span>{benefit}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="flex justify-between items-center">
-                    <span className="text-lg font-bold">${product.price}</span>
-                    <div className="flex gap-2">
-                      <ActionButton
-                        variant="edit"
-                        editClassName=" !bg-white border border-darkPurple "
-                        onClick={() => {
-                          setSelectSupplement(product);
-                          setShowAddModal(true);
-                        }}
-                      >
-                        <Edit2 size={16} className="text-darkPurple" />
-                      </ActionButton>
-                      <ActionButton
-                        variant="delete"
-                        onClick={() => handleDeleteForSupplement(product.id)}
-                        isDelete={deletingId === product.id}
-                      >
-                        <Trash2 size={16} className="text-red-500" />
-                      </ActionButton>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
-          {supplementData && supplementData?.data.data.data.length > 1 && (
+          {supplementData && supplementData?.data.data.length > 1 && (
             <div className="py-5">
               <Pagination
                 currentPage={page}
-                totalPages={supplementData?.data.data.meta.totalPages || 1}
+                totalPages={supplementData?.data.meta.totalPages || 1}
                 onPageChange={setPage}
               />
             </div>

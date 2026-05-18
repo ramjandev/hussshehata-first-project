@@ -30,7 +30,7 @@ export const Safety: React.FC<SafetyProps> = ({
     null,
   );
 
-  const safetyData = safety?.data?.data ?? [];
+  const safetyData = safety?.data ?? [];
 
   const handleEdit = (item: SafetyContentItem) => {
     setSelectSafety(item);
@@ -77,9 +77,13 @@ export const Safety: React.FC<SafetyProps> = ({
                   A IMPORTANT SAFETY INFORMATION:
                 </CommonHeader>
 
-                <div
+                {/* <div
                   dangerouslySetInnerHTML={{ __html: item.content }}
                   className="prose prose-sm max-w-none text-sm text-gray-700"
+                /> */}
+                <div
+                  dangerouslySetInnerHTML={{ __html: item.content }}
+                  className="prose prose-sm max-w-none text-sm text-gray-700 pb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:my-1"
                 />
               </div>
 

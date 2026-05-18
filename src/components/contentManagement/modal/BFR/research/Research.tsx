@@ -32,7 +32,7 @@ const Research: React.FC<ResearchProps> = ({
 
   const { data, isLoading } = useGetResearchQuery();
 
-  const research = data?.data?.data ?? [];
+  const research = data?.data ?? [];
   const list = new Array(10).fill(null);
   const [deleteResearch] = useDeleteResearchMutation();
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -74,7 +74,7 @@ const Research: React.FC<ResearchProps> = ({
 
                 <div
                   dangerouslySetInnerHTML={{ __html: item.richContent }}
-                  className="prose prose-sm max-w-none text-sm text-gray-700 pb-4"
+                  className="prose prose-sm max-w-none text-sm text-gray-700 pb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:my-1"
                 />
               </div>
 

@@ -33,17 +33,10 @@ export type PartnerClinic = {
   createdAt: string;
   updatedAt: string;
 };
-export type PartnerClinicData = {
-  success: boolean;
-  data: PartnerClinic[];
-  timestamp: string;
-  path: string;
-  method: string;
-};
 
 export type PartnerClinicResponse = {
   success: boolean;
-  data: PartnerClinicData;
+  data: PartnerClinic[];
   timestamp: string;
   path: string;
   method: string;
@@ -80,17 +73,9 @@ export type SupplementList = {
   meta: PaginationMeta;
 };
 
-export type SupplementApiInner = {
-  success: boolean;
-  data: SupplementList;
-  timestamp: string;
-  path: string;
-  method: string;
-};
-
 export type SupplementApiResponse = {
   success: boolean;
-  data: SupplementApiInner;
+  data: SupplementList;
   timestamp: string;
   path: string;
   method: string;
@@ -102,75 +87,3 @@ export interface SupplementParams {
   search?: string;
   category?: "FOUNDATION" | "PERFORMANCE" | "RECOVERY" | "OPTIONAL" | string;
 }
-
-// // program card
-// export type ProgramDifficulty = "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
-
-// export type DaySplitType = "PUSH_PULL_LEGS" | string;
-
-// export type Program = {
-//   id: string;
-//   name: string;
-//   description: string;
-//   type: string;
-//   difficulty: ProgramDifficulty;
-//   durationWeeks: number;
-//   daysPerWeek: number;
-//   daySplitType: DaySplitType;
-//   isPremium: boolean;
-//   isActive: boolean;
-//   isPublished: boolean;
-//   thumbnailUrl: string | null;
-//   sortOrder: number;
-//   features: string[];
-//   tags: string[];
-//   hasBFR: boolean;
-//   hasAbsWorkout: boolean;
-//   hasActivation: boolean;
-//   trainingDays: unknown[];
-//   restDays: unknown[];
-//   dayFocus: unknown[];
-//   accessories: unknown[];
-//   createdByUserId: string;
-//   createdAt: string;
-//   updatedAt: string;
-// };
-
-// export type ProgramMeta = {
-//   page: number;
-//   limit: number;
-//   total: number;
-//   totalPage: number;
-// };
-
-// export type ProgramListData = {
-//   meta: ProgramMeta;
-//   data: Program[];
-// };
-
-// export type ProgramApiResponse = {
-//   success: boolean;
-//   data: ProgramListData;
-//   timestamp: string;
-//   path: string;
-//   method: string;
-// };
-
-// export type ProgramListResponse = {
-//   success: boolean;
-//   data: ProgramApiResponse;
-//   timestamp: string;
-//   path: string;
-//   method: string;
-// };
-
-// export type ProgramListParams = {
-//   page?: number;
-//   limit?: number;
-//   search?: string;
-//   isActive?: boolean;
-//   isPublished?: boolean;
-//   isPremium?: boolean;
-//   type?: string;
-//   difficulty?: ProgramDifficulty;
-// };

@@ -228,17 +228,10 @@ interface UserListData {
 }
 
 // API response wrapper types
-interface InnerApiResponse {
-  success: boolean;
-  data: UserListData;
-  timestamp: string;
-  path: string;
-  method: string;
-}
 
 export interface userManagementResponse {
   success: boolean;
-  data: InnerApiResponse;
+  data: UserListData;
   timestamp: string;
   path: string;
   method: string;

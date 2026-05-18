@@ -96,18 +96,9 @@ interface ActivityTrackingData {
   mostPopulerProgramme: PopularProgramme[];
 }
 
-// API Response wrapper
-interface ApiInnerResponse {
-  success: boolean;
-  data: ActivityTrackingData;
-  timestamp: string;
-  path: string;
-  method: string;
-}
-
 export interface ActivityTrackingResponse {
   success: boolean;
-  data: ApiInnerResponse;
+  data: ActivityTrackingData;
   timestamp: string;
   path: string;
   method: string;

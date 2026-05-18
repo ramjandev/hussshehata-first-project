@@ -1,5 +1,9 @@
 import SectionHeader from "@/common/button/SectionHeader";
 import {
+  useRevenueGrowthQuery,
+  useUserGrowthQuery,
+} from "@/store/features/premium/premiumFeature";
+import {
   Bar,
   BarChart,
   CartesianGrid,
@@ -10,25 +14,25 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-const revenueData = [
-  { month: "Jan", value: 1200 },
-  { month: "Feb", value: 1500 },
-  { month: "Mar", value: 1800 },
-  { month: "Apr", value: 2200 },
-  { month: "May", value: 2600 },
-  { month: "Jun", value: 3000 },
-];
 
-// Data for User Growth chart
-const userGrowthData = [
-  { month: "Jan", free: 850, premium: 320 },
-  { month: "Feb", free: 450, premium: 480 },
-  { month: "Mar", free: 1100, premium: 520 },
-  { month: "Apr", free: 1300, premium: 620 },
-  { month: "May", free: 1550, premium: 820 },
-  { month: "Jun", free: 2350, premium: 1050 },
-];
 const RevenueAndSubscription = () => {
+  const { data } = useUserGrowthQuery();
+
+  const userGrowthData =
+    data?.data?.items?.map((item: { month: string; newUsers: number }) => ({
+      month: item.month,
+      free: item.newUsers,
+    })) || [];
+
+  const { data: revenue } = useRevenueGrowthQuery();
+  const revenueData =
+    revenue?.data?.items?.map(
+      (item: { month: string; revenue: number; newSubscriptions: number }) => ({
+        month: item.month,
+        value: item.revenue,
+      }),
+    ) || [];
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
       <div className="bg-white text-black rounded-2xl p-6">
@@ -62,10 +66,7 @@ const RevenueAndSubscription = () => {
       </div>
 
       <div className="bg-white text-black rounded-2xl p-6">
-        <SectionHeader
-          title="User Growth"
-          description=" Premium vs Free user growth"
-        />
+        <SectionHeader title="User Growth" description="Monthly user growth" />
 
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={userGrowthData}>
@@ -77,14 +78,11 @@ const RevenueAndSubscription = () => {
             <Bar dataKey="premium" fill="#a855f7" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
+
         <div className="flex items-center justify-center gap-6 mt-4">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-blue-500 rounded"></div>
-            <span className="text-sm text-gray-600">free</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-purple-500 rounded"></div>
-            <span className="text-sm text-gray-600">premium</span>
+            <span className="text-sm text-gray-600">User</span>
           </div>
         </div>
       </div>

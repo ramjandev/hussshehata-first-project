@@ -15,7 +15,7 @@ const Execution = () => {
   const [showNoteModal, setShowNoteModal] = useState(false);
   const { data, isLoading } = useGetExecutionNoteQuery();
   const list = new Array(5).fill(null);
-  const executionNotes = data?.data.data || [];
+  const executionNotes = data?.data || [];
   const [selectedNote, setSelectedNote] = useState<null | ExecutionNoteSingle>(
     null,
   );
@@ -79,12 +79,6 @@ const Execution = () => {
                 }}
                 isLoading={deletingId === note.id}
                 iconAction={() => {}}
-                icon={
-                  <div className="flex  items-center text-gray-400 gap-0.5 ">
-                    <div className="text-xs">↑</div>
-                    <div className="text-xs">↓</div>
-                  </div>
-                }
               />
             </div>
           ))

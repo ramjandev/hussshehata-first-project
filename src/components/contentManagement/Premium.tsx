@@ -1,21 +1,26 @@
 import DashboardCardSkeleton from "@/common/button/DashboardCardSkeleton";
-import { useGetProgramLockQuery } from "@/store/features/content/essentialManagement";
-import { useGetallProgramQuery } from "@/store/features/program/programAPI";
+import {
+  useGetallProgramQuery,
+  useSingleProgramQuery,
+} from "@/store/features/program/programAPI";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import ProgramCard from "../reuseable/ProgramCard";
 import WeekCard from "../reuseable/WeekCard";
 
 const Premium = () => {
-  const { data, isLoading } = useGetallProgramQuery();
+  const { data } = useGetallProgramQuery({});
   const programs = data?.data?.data ?? [];
-  const list = new Array(5).fill(null);
 
   const [selectedProgramId, setSelectedProgramId] = useState<string>("");
-  const { data: lockStatus } = useGetProgramLockQuery(selectedProgramId, {
-    skip: !selectedProgramId,
-    refetchOnMountOrArgChange: true,
-  });
+
+  const { data: singleProgram, isLoading: singleProgramLoading } =
+    useSingleProgramQuery(selectedProgramId, {
+      skip: !selectedProgramId,
+      refetchOnMountOrArgChange: true,
+    });
+
+  const weeks = singleProgram?.data?.data?.weeks ?? [];
 
   return (
     <div>
@@ -39,29 +44,26 @@ const Premium = () => {
                   )}
                 </button>
               }
-              onDelete={() => {}}
-              onEdit={() => {
-                setSelectedProgramId(program.id);
-              }}
               iconAction={() => {
                 setSelectedProgramId(program.id);
               }}
             />
-            {/* selectedProgramId === program.id */}
-            {isLoading && selectedProgramId === program.id ? (
-              <div className="mt-4 grid grid-cols-1 sm:grid-cols-6  gap-4 w-full">
-                {list.map((_, idx) => (
-                  <DashboardCardSkeleton key={idx} />
-                ))}
-              </div>
-            ) : (
-              lockStatus?.data?.data &&
-              selectedProgramId === program.id && (
-                <WeekCard
-                  program={lockStatus?.data?.data}
-                  selectedProgramId={selectedProgramId}
-                />
-              )
+
+            {selectedProgramId === program.id && (
+              <>
+                {singleProgramLoading ? (
+                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-6 gap-4 w-full">
+                    {Array.from({ length: 5 }).map((_, idx) => (
+                      <DashboardCardSkeleton key={idx} />
+                    ))}
+                  </div>
+                ) : (
+                  <WeekCard
+                    singleWeek={weeks}
+                    selectedProgramId={selectedProgramId}
+                  />
+                )}
+              </>
             )}
           </div>
         ))}

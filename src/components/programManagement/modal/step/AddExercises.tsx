@@ -6,6 +6,7 @@ import {
   prev,
   updateProgram,
 } from "@/store/baseApi/programSlice/program.slice";
+import type { ExerciseTabType } from "@/store/features/program/types/addExperience";
 import type { ExerciseType } from "@/store/features/program/types/newProgram";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { Edit2, Plus, Trash2 } from "lucide-react";
@@ -57,7 +58,6 @@ const AddExercises = () => {
     exerciseIndex: number;
   } | null>(null);
 
-  // Open "Add Exercise" modal with context of which day/week/type
   const handleOpenAddExercise = (
     weekIndex: number,
     dayIndex: number,
@@ -67,7 +67,6 @@ const AddExercises = () => {
     setShowExerciseModal(true);
   };
 
-  // Called by ShowExerciseModal when user picks an exercise
   const handleAddExercise = (exercise: StoredExercise) => {
     if (!exerciseContext) return;
     const { weekIndex, dayIndex, exerciseFor } = exerciseContext;
@@ -92,7 +91,6 @@ const AddExercises = () => {
     setExerciseContext(null);
   };
 
-  // Delete an exercise from a specific day
   const handleDeleteExercise = (
     weekIndex: number,
     dayIndex: number,
@@ -124,7 +122,6 @@ const AddExercises = () => {
     dispatch(updateProgram({ weeks: updatedWeeks }));
   };
 
-  // Open edit modal — passes WorkoutSet[] directly via ExerciseForModal
   const handleOpenEditExercise = (
     weekIndex: number,
     dayIndex: number,
@@ -188,6 +185,9 @@ const AddExercises = () => {
     setEditContext(null);
   };
 
+  // controlled by UpdateSetsModal
+  const [exerciseType, setExerciseType] =
+    useState<ExerciseTabType>("MAIN_EXERCISE");
   return (
     <div>
       <div className="space-y-6">
@@ -244,9 +244,10 @@ const AddExercises = () => {
 
                       <ActionButton
                         variant="add"
-                        onClick={() =>
-                          handleOpenAddExercise(weekIndex, dayIndex, "main")
-                        }
+                        onClick={() => {
+                          handleOpenAddExercise(weekIndex, dayIndex, "main");
+                          setExerciseType("MAIN_EXERCISE");
+                        }}
                         title="Add Main Exercise"
                       >
                         <Plus className="w-4 h-4" />
@@ -312,9 +313,10 @@ const AddExercises = () => {
 
                       <ActionButton
                         variant="add"
-                        onClick={() =>
-                          handleOpenAddExercise(weekIndex, dayIndex, "bfr")
-                        }
+                        onClick={() => {
+                          handleOpenAddExercise(weekIndex, dayIndex, "bfr");
+                          setExerciseType("BFR_EXERCISE");
+                        }}
                         title="Add Bfr Exercise"
                       >
                         <Plus className="w-4 h-4" />
@@ -379,9 +381,11 @@ const AddExercises = () => {
 
                       <ActionButton
                         variant="add"
-                        onClick={() =>
-                          handleOpenAddExercise(weekIndex, dayIndex, "abs")
-                        }
+                        onClick={() => {
+                          handleOpenAddExercise(weekIndex, dayIndex, "abs");
+
+                          setExerciseType("ABS_EXERCISE");
+                        }}
                         title="Add Abs Exercise"
                       >
                         <Plus className="w-4 h-4" />
@@ -468,6 +472,8 @@ const AddExercises = () => {
         <ShowExerciseModal
           setShowExerciseModal={setShowExerciseModal}
           onSelectExercise={handleAddExercise}
+          exerciseType={exerciseType}
+          setExerciseType={setExerciseType}
         />
       )}
       {selectSet && (
@@ -486,7 +492,6 @@ const AddExercises = () => {
   );
 };
 
-// Helper: filter exercises by their exerciseFor field
 function getExercisesByType(
   exercises: StoredExercise[],
   type: "main" | "bfr" | "abs",

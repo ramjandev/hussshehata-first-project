@@ -12,17 +12,9 @@ export interface SafetyContentItem {
   updatedAt: string;
 }
 
-interface EssentialContentResponse {
-  success: boolean;
-  data: SafetyContentItem[];
-  timestamp: string;
-  path: string;
-  method: string;
-}
-
 export interface SafetyResponse {
   success: boolean;
-  data: EssentialContentResponse;
+  data: SafetyContentItem[];
   timestamp: string;
   path: string;
   method: string;

@@ -128,6 +128,9 @@ export const baseAPI = createApi({
     "program-lock",
     "program-card",
     "plans",
+    "subscription",
+    "dashboard",
+    "exercises",
   ],
   endpoints: () => ({}),
 });

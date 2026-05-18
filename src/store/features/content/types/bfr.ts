@@ -23,17 +23,9 @@ export interface BfrSession {
   updatedAt: string;
 }
 
-export interface BfrListInnerData {
-  success: boolean;
-  data: BfrSession[];
-  timestamp: string;
-  path: string;
-  method: string;
-}
-
 export interface BfrListApiResponse {
   success: boolean;
-  data: BfrListInnerData;
+  data: BfrSession[];
   timestamp: string;
   path: string;
   method: string;

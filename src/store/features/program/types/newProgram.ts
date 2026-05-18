@@ -1,5 +1,10 @@
 export type ExerciseType = "Main" | "BFR" | "ABS";
 
+export type publishedStatus = "PUBLISHED" | "DRAFT";
+export type ProgramStatusParams = {
+  publishedStatus?: publishedStatus;
+};
+
 // Set / rep entry
 interface WorkoutSet {
   weight: number;
@@ -87,11 +92,11 @@ export interface ExerciseSingle {
   animation: string | null;
   defaultSet: number;
   defaultReps: number;
-  newTrainingMethodId: UUID | null;
-  newTrainingMethod: TrainingMethod | null;
   createdAt: ISODateString;
   updatedAt: ISODateString;
+  newTrainingMethodId: UUID | null;
   sets: WorkoutSetSingle[];
+  newTrainingMethod: TrainingMethod | null;
 }
 
 export interface TrainingDaySingle {
@@ -102,14 +107,14 @@ export interface TrainingDaySingle {
   dayFocus: string;
   dayFocusMuscle: string[];
   trainingMethodId: UUID;
-  trainingMethod: TrainingMethod;
   description: string;
-  accessories: string[]; // Confirmed as string[] from response
+  accessories: string[];
   executeHint: string;
   isEnableBFR: boolean;
   isEnableABS: boolean;
   createdAt: ISODateString;
   updatedAt: ISODateString;
+  trainingMethod: TrainingMethod;
   exercises: ExerciseSingle[];
 }
 
@@ -127,37 +132,54 @@ export interface WeekSingle {
 
 export type ProgramStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
+export interface Purchase {
+  id: string;
+  userId: UUID;
+  programId: UUID;
+  plan: string;
+  status: string;
+  stripeCustomerId: string;
+  stripeSubscriptionId: string;
+  stripePriceId: string;
+  stripePaymentIntentId: string;
+  currentPeriodStart: ISODateString;
+  currentPeriodEnd: ISODateString;
+  cancelAtPeriodEnd: boolean;
+  cancelledAt: ISODateString | null;
+  createdAt: ISODateString;
+  updatedAt: ISODateString;
+  user?: {
+    id: UUID;
+    name: string;
+    email: string;
+  };
+}
+
 export interface Programme {
   id: UUID;
   name: string;
   status: ProgramStatus;
   description: string;
   isActive: boolean;
+  isDeleted: boolean;
+  isPublished: boolean;
   features: string[];
   tags: string[];
   createdAt: ISODateString;
   updatedAt: ISODateString;
   weeks: WeekSingle[];
-  purchases: any[]; // You can define a proper type later if needed
+  purchases: Purchase[];
 }
 
-// Inner most payload
-export interface SingleProgrammeData {
+export interface SingleProgrammeApiResponse {
   success: boolean;
   message: string;
   data: Programme;
 }
 
-// Middle wrapper
-export interface SingleProgrammeWrapper {
-  success: boolean;
-  data: SingleProgrammeData;
-}
-
-// Final Response
 export interface SingleProgramResponse {
   success: boolean;
-  data: SingleProgrammeWrapper;
+  data: SingleProgrammeApiResponse;
   timestamp: ISODateString;
   path: string;
   method: string;

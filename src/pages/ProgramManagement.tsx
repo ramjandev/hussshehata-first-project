@@ -4,7 +4,6 @@ import AllProgram from "@/components/programManagement/AllProgram";
 import CreateProgramModal from "@/components/programManagement/modal/CreateProgramModal";
 import ProgramAnalytics from "@/components/programManagement/ProgramAnalytics";
 import Training from "@/components/programManagement/Training";
-import UserSearchBar from "@/components/userManagement/UserSearchBar";
 import { openProgramModal } from "@/store/baseApi/programSlice/program.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { Clock, Crown, Dumbbell, Users } from "lucide-react";
@@ -72,7 +71,6 @@ const ProgramManagement = () => {
       </div>
 
       <UserTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
-      <UserSearchBar />
       {activeTab === "All Programs" && <AllProgram />}
       {activeTab === "Training Methods Library" && <Training />}
       {activeTab === "Program Analytics" && <ProgramAnalytics />}

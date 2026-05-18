@@ -6,9 +6,9 @@ interface TrackingProps {
   activity: ActivityTrackingResponse;
 }
 const Tracking: React.FC<TrackingProps> = ({ activity }) => {
-  const recentActivity = activity.data.data.userActivityLog ?? [];
-  const activeUsers = activity.data.data.mostRecentActiveUser ?? [];
-  const popularPrograms = activity.data.data.mostPopulerProgramme ?? [];
+  const recentActivity = activity?.data?.userActivityLog ?? [];
+  const activeUsers = activity?.data?.mostRecentActiveUser ?? [];
+  const popularPrograms = activity?.data?.mostPopulerProgramme ?? [];
   return (
     <div className="space-y-6">
       {/* Recent User Activity */}

@@ -10,7 +10,6 @@ import type {
   HealthMarkersParams,
   HealthMarkersResponse,
 } from "./types/healthCare";
-import type { ProgramLockStatus } from "./types/programLock";
 
 export const essentialManagement = baseAPI.injectEndpoints({
   endpoints: (build) => ({
@@ -112,37 +111,6 @@ export const essentialManagement = baseAPI.injectEndpoints({
       }),
       providesTags: ["health-marker"],
     }),
-
-    // program lock
-    getProgramLock: build.query<ProgramLockStatus, string>({
-      query: (id) => ({
-        url: `/admin/programs/${id}/lock-status`,
-        method: "GET",
-      }),
-      providesTags: ["program-lock"],
-    }),
-    allProgramLockToggle: build.mutation<
-      any,
-      { data: { lock: boolean }; id: string }
-    >({
-      query: ({ id, data }) => ({
-        url: `/admin/programs/${id}/lock`,
-        method: "PATCH",
-        body: data,
-      }),
-      invalidatesTags: ["program-lock", "program-card"],
-    }),
-    singleProgramLockToggle: build.mutation<
-      any,
-      { data: { lock: boolean }; id: string; week: number }
-    >({
-      query: ({ id, data, week }) => ({
-        url: `/admin/programs/${id}/weeks/${week}/lock`,
-        method: "PATCH",
-        body: data,
-      }),
-      invalidatesTags: ["program-lock", "program-card"],
-    }),
   }),
 });
 
@@ -162,9 +130,4 @@ export const {
   usePostHealthMarkerMutation,
   useUpdateHealthMarkerMutation,
   useDeleteHealthMarkerMutation,
-
-  // program lock
-  useGetProgramLockQuery,
-  useAllProgramLockToggleMutation,
-  useSingleProgramLockToggleMutation,
 } = essentialManagement;

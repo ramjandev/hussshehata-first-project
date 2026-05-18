@@ -5,7 +5,6 @@ import CommonHeader from "@/common/header/CommonHeader";
 import type { ExerciseTabType } from "@/store/features/program/types/addExperience";
 import type { ExerciseType } from "@/store/features/program/types/newProgram";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { LuPlus } from "react-icons/lu";
 import { RiDeleteBin5Line } from "react-icons/ri";
@@ -34,15 +33,16 @@ interface StoredExercise {
 interface ShowExerciseModalProps {
   setShowExerciseModal: (show: boolean) => void;
   onSelectExercise: (exercise: StoredExercise) => void;
+  exerciseType: ExerciseTabType;
+  setExerciseType: (type: ExerciseTabType) => void;
 }
 
 const ShowExerciseModal: React.FC<ShowExerciseModalProps> = ({
   setShowExerciseModal,
   onSelectExercise,
+  exerciseType,
+  setExerciseType,
 }) => {
-  const [exerciseType, setExerciseType] =
-    useState<ExerciseTabType>("MAIN_EXERCISE");
-
   const {
     register,
     handleSubmit,

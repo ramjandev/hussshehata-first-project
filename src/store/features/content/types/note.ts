@@ -9,17 +9,9 @@ export interface ExecutionNote {
   updatedAt: string;
 }
 
-export interface ExecutionNoteInnerResponse {
-  success: boolean;
-  data: ExecutionNote[];
-  timestamp: string;
-  path: string;
-  method: string;
-}
-
 export interface ExecutionNoteApiResponse {
   success: boolean;
-  data: ExecutionNoteInnerResponse;
+  data: ExecutionNote[];
   timestamp: string;
   path: string;
   method: string;

@@ -44,8 +44,8 @@ const UserManagement = () => {
     { refetchOnMountOrArgChange: true },
   );
 
-  const allUsers = data?.data.data.data ?? [];
-  const dashboardData = data?.data.data.dashboardData;
+  const allUsers = data?.data.data ?? [];
+  const dashboardData = data?.data.dashboardData;
   useEffect(() => {
     const tabMap: Record<string, UserType | ""> = {
       "All Users": "",
@@ -174,9 +174,9 @@ const UserManagement = () => {
             <Tracking activity={activity as ActivityTrackingResponse} />
           )}
 
-          {data?.data.data.data && data?.data.data.data.length > 1 && (
+          {data?.data.data && data?.data?.data?.length > 1 && (
             <Pagination
-              totalPages={data?.data.data.meta.totalPage ?? 0}
+              totalPages={data?.data?.meta?.totalPage ?? 0}
               currentPage={page}
               onPageChange={(page) => setPage(page)}
             />

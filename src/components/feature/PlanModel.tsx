@@ -79,43 +79,66 @@ const PlanModel: React.FC<PlanModelProps> = ({
 
   const onSubmit = async (formData: PlanFormValues) => {
     try {
-      const basePayload = {
-        name: formData.name,
-        plan: formData.plan,
-        priceUSD: formData.priceUSD,
-        features: formData.features.map((f) => f.value),
-        isActive: formData.isActive,
-      };
-
-      let payload: CreatePlanPayload;
-
-      if (formData.plan === "FREE") {
-        payload = {
-          ...basePayload,
-          plan: "FREE",
-        };
-      } else if (formData.plan === "MONTHLY") {
-        payload = {
-          ...basePayload,
-          plan: "MONTHLY",
-          billingPeriod: "MONTHLY",
-          isPopular: formData.isPopular || false,
-        };
-      } else {
-        // ANNUAL
-        payload = {
-          ...basePayload,
-          plan: "ANNUAL",
-          billingPeriod: "ANNUAL",
-          savingsPercent: formData.savingsPercent || undefined,
-          isPopular: formData.isPopular || false,
-        };
-      }
-
       if (isEdit && editingPlan) {
-        await updatePlan({ id: editingPlan.id, data: payload }).unwrap();
+        // ✅ Omit both `name` and `plan` for update
+        const baseUpdatePayload = {
+          priceUSD: formData.priceUSD,
+          features: formData.features.map((f) => f.value),
+          isActive: formData.isActive,
+        };
+
+        let updatePayload;
+
+        if (formData.plan === "FREE") {
+          updatePayload = { ...baseUpdatePayload };
+        } else if (formData.plan === "MONTHLY") {
+          updatePayload = {
+            ...baseUpdatePayload,
+            billingPeriod: "MONTHLY" as const,
+            isPopular: formData.isPopular || false,
+          };
+        } else {
+          updatePayload = {
+            ...baseUpdatePayload,
+            billingPeriod: "ANNUAL" as const,
+            savingsPercent: formData.savingsPercent || undefined,
+            isPopular: formData.isPopular || false,
+          };
+        }
+
+        await updatePlan({ id: editingPlan.id, data: updatePayload }).unwrap();
       } else {
-        await createPlan(payload).unwrap();
+        // ✅ Full payload for create
+        const basePayload = {
+          name: formData.name,
+          plan: formData.plan,
+          priceUSD: formData.priceUSD,
+          features: formData.features.map((f) => f.value),
+          isActive: formData.isActive,
+        };
+
+        let createPayload: CreatePlanPayload;
+
+        if (formData.plan === "FREE") {
+          createPayload = { ...basePayload, plan: "FREE" };
+        } else if (formData.plan === "MONTHLY") {
+          createPayload = {
+            ...basePayload,
+            plan: "MONTHLY",
+            billingPeriod: "MONTHLY",
+            isPopular: formData.isPopular || false,
+          };
+        } else {
+          createPayload = {
+            ...basePayload,
+            plan: "ANNUAL",
+            billingPeriod: "ANNUAL",
+            savingsPercent: formData.savingsPercent || undefined,
+            isPopular: formData.isPopular || false,
+          };
+        }
+
+        await createPlan(createPayload).unwrap();
       }
 
       reset();
@@ -125,7 +148,6 @@ const PlanModel: React.FC<PlanModelProps> = ({
       console.error("Failed to save plan:", err);
     }
   };
-
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-screen items-center justify-center p-4">

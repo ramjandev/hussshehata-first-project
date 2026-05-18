@@ -437,7 +437,7 @@ const DaySplit = () => {
                     key={field.id}
                     type="button"
                     onClick={() => setActiveWeekIndex(idx)}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium border transition-colors ${
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium border transition-colors cursor-pointer ${
                       activeWeekIndex === idx
                         ? "bg-blue text-white border-blue"
                         : "bg-white text-gray-700 border-gray-200 hover:border-blue hover:text-blue"
@@ -446,7 +446,7 @@ const DaySplit = () => {
                     Week {weekNum}
                     {isSaved && (
                       <span
-                        className="inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-white/20"
+                        className="inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-white/20 cursor-pointer"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleRemoveWeek(idx);

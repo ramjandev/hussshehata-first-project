@@ -1,10 +1,13 @@
 import Spinner from "@/common/custom/Spinner";
 import CommonHeader from "@/common/header/CommonHeader";
 import WeekCard from "@/components/programManagement/programDetails/WeekCard";
-import { useSingleProgramQuery } from "@/store/features/program/programAPI";
+import {
+  useDeleteProgramMutation,
+  useSingleProgramQuery,
+} from "@/store/features/program/programAPI";
 import type { Programme } from "@/store/features/program/types/newProgram";
 import { Trash2 } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const DAY_NAMES = ["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -49,6 +52,19 @@ const ProgramDetail = () => {
   const totalRestDays =
     p?.weeks?.reduce((acc, week) => acc + week.restDays.length, 0) || 0;
 
+  const [deleteProgram, { isLoading: isDeleting }] = useDeleteProgramMutation();
+
+  const navigate = useNavigate();
+  const handleDelete = async () => {
+    try {
+      if (!programId) return;
+      await deleteProgram(programId).unwrap();
+      navigate("/dashboard/program-management");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div>
       {isLoading ? (
@@ -73,8 +89,11 @@ const ProgramDetail = () => {
                       {p.isActive ? "Active" : "Inactive"}
                     </span>
                   </div>
-                  <div className="flex shrink-0 gap-2">
-                    <button className="flex items-center gap-1.5 rounded-lg bg-red-500/80 border border-red-400/30 px-3 py-2 text-sm font-semibold text-white hover:bg-red-500 transition-colors cursor-pointer">
+                  <div onClick={handleDelete} className="flex shrink-0 gap-2">
+                    <button
+                      disabled={isDeleting}
+                      className="flex items-center gap-1.5 rounded-lg bg-red-500/80 border border-red-400/30 px-3 py-2 text-sm font-semibold text-white hover:bg-red-500 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
                       <Trash2 className="text-base" />
                     </button>
                   </div>

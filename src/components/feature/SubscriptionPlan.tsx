@@ -1,13 +1,8 @@
-import ActionButton from "@/common/button/ActionButton";
 import DashboardCardSkeleton from "@/common/button/DashboardCardSkeleton";
 import CommonHeader from "@/common/header/CommonHeader";
-import {
-  useDeletePlansMutation,
-  useGetPlansQuery,
-} from "@/store/features/premium/premiumFeature";
+import { useGetPlansQuery } from "@/store/features/premium/premiumFeature";
 import type { SubscriptionPlanType } from "@/store/features/premium/types/premium";
-import { Check, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Check } from "lucide-react";
 import PlanModel from "./PlanModel";
 
 interface SubscriptionPlanProps {
@@ -31,23 +26,6 @@ const SubscriptionPlan: React.FC<SubscriptionPlanProps> = ({
   const plans = plansData?.data ?? [];
   const list = new Array(3).fill(0);
 
-  const [deletePlan] = useDeletePlansMutation();
-
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
-
-  const handleDeletePlan = async (id: string) => {
-    try {
-      setSelectedPlanId(id);
-      if (id) {
-        await deletePlan(id).unwrap();
-      }
-
-      setSelectedPlanId(null);
-    } catch (error) {
-      console.error("Delete failed:", error);
-      setSelectedPlanId(null);
-    }
-  };
   return (
     <div>
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-6">
@@ -110,13 +88,6 @@ const SubscriptionPlan: React.FC<SubscriptionPlanProps> = ({
                 >
                   Edit Plan
                 </button>
-                <ActionButton
-                  isDelete={selectedPlanId === plan.id}
-                  variant="delete"
-                  onClick={() => handleDeletePlan(plan.id)}
-                >
-                  <Trash2 size={16} />
-                </ActionButton>
               </div>
             </div>
           ))

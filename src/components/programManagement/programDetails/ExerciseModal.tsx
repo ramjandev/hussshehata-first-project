@@ -73,16 +73,6 @@ const ExerciseModal: React.FC<Props> = ({ isOpen, onClose, defaultValues }) => {
   return (
     <ModalContainer title="Update Exercise" onClose={onClose} size="2xl">
       <form onSubmit={handleSubmit(submitHandler)} className="space-y-3">
-        <div>
-          <label className={inputClass.label}> Day ID</label>
-          <input
-            placeholder="Day ID"
-            {...register("dayId")}
-            className={inputClass.input}
-          />
-          <p className={inputClass.error}>{errors.dayId?.message}</p>
-        </div>
-
         {/* Name */}
         <div>
           <label className={inputClass.label}> Exercise Name</label>

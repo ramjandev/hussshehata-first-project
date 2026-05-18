@@ -123,26 +123,6 @@ const DayUpdateModal: React.FC<Props> = ({
         className="max-h-[70vh] space-y-3 overflow-y-auto pr-1"
       >
         <div>
-          <label className={inputClass.label}>Program ID</label>
-          <input
-            placeholder="Program ID"
-            {...register("programId")}
-            className={inputClass.input}
-          />
-          <p className={inputClass.error}>{errors.programId?.message}</p>
-        </div>
-
-        <div>
-          <label className={inputClass.label}>Week ID</label>
-          <input
-            placeholder="Week ID"
-            {...register("weekId")}
-            className={inputClass.input}
-          />
-          <p className={inputClass.error}>{errors.weekId?.message}</p>
-        </div>
-
-        <div>
           <label className={inputClass.label}>Day Number</label>
           <input
             type="number"
@@ -190,16 +170,6 @@ const DayUpdateModal: React.FC<Props> = ({
             />
           </div>
           <p className={inputClass.error}>{errors.dayFocusMuscle?.message}</p>
-        </div>
-
-        <div>
-          <label className={inputClass.label}>Training Method ID</label>
-          <input
-            placeholder="Training Method ID"
-            {...register("trainingMethodId")}
-            className={inputClass.input}
-          />
-          <p className={inputClass.error}>{errors.trainingMethodId?.message}</p>
         </div>
 
         <div>

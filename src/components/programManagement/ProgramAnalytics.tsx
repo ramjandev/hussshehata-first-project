@@ -44,8 +44,6 @@ const ProgramAnalytics = () => {
 
   const programAnalytics = data?.data?.data?.data ?? [];
 
-  const topPrograms = programAnalytics.slice(0, 2);
-  console.log("topPrograms", topPrograms);
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
