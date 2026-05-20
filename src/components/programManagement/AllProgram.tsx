@@ -7,6 +7,7 @@ import {
   useDeleteProgramMutation,
   useGetallProgramQuery,
   usePublishProgramMutation,
+  useToggleProgramMutation,
 } from "@/store/features/program/programAPI";
 import type { Programme } from "@/store/features/program/types/allProgram";
 import type { publishedStatus } from "@/store/features/program/types/newProgram";
@@ -71,6 +72,20 @@ const AllProgram = () => {
       setPublishingId(null);
     }
   };
+
+  const [toggleId, setToggleId] = useState(null);
+  const [programToggle] = useToggleProgramMutation();
+
+  const handleToggle = async (id: string) => {
+    try {
+      setToggleId(id);
+      await programToggle(id).unwrap();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setToggleId(null);
+    }
+  };
   return (
     <div>
       {isLoading ? (
@@ -111,6 +126,13 @@ const AllProgram = () => {
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
+                      <ActionButton
+                        onClick={() => handleToggle(program.id)}
+                        variant="edit"
+                      >
+                        {!program.isPremium ? "Make basic" : "Make premium"}
+                      </ActionButton>
+
                       <ActionButton
                         onClick={() => {
                           handlePublish(program.id);

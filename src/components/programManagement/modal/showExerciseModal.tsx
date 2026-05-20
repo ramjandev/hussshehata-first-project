@@ -84,10 +84,15 @@ const ShowExerciseModal: React.FC<ShowExerciseModalProps> = ({
     return `Add Main Exercise`;
   };
 
+  const getExerciseType = (tab: ExerciseTabType): ExerciseType => {
+    if (tab === "BFR_EXERCISE") return "BFR";
+    if (tab === "ABS_EXERCISE") return "ABS";
+    return "Main";
+  };
   const onSubmit = (formValues: AddExercisePayload) => {
     const exercise: StoredExercise = {
       name: formValues.exerciseName,
-      exerciseType: formValues.setType,
+      exerciseType: getExerciseType(exerciseType),
       exerciseFor: formValues.exerciseFor,
       description: formValues.exerciseDescription,
       defaultSet: formValues.sets.length,

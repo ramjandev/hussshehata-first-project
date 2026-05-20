@@ -1,52 +1,35 @@
-type Program = {
+export interface ProgramHighlight {
   id: string;
   name: string;
-  type: string;
-  durationWeeks: number;
-  difficulty: "BEGINNER" | "INTERMEDIATE" | "ADVANCED" | string;
-  isPremium: boolean;
-  isActive: boolean;
-  isPublished: boolean;
-  thumbnailUrl: string | null;
   enrollments: number;
-  activeUsers: number;
   completionRate: number;
-  completedCount: number;
-  estimatedRevenue: number;
-  trend: "DECLINING" | "GROWING" | "STABLE" | string;
-  trendIcon: string;
-  reviewCount: number;
-};
+}
 
-type Meta = {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-  totalRevenue: number;
-  premiumUserCount: number;
-};
+export interface ProgramHighlightsData {
+  mostPopular: ProgramHighlight;
+  highestCompletion: ProgramHighlight;
+}
 
-type InnerData = {
-  data: Program[];
-  meta: Meta;
-};
-
-export type ProgramAnalyticsResponse = {
+export interface ProgramHighlightsResponse {
   success: boolean;
-  data: {
-    success: boolean;
-    data: InnerData;
-    timestamp: string;
-    path: string;
-    method: "GET" | "POST" | "PUT" | "DELETE" | string;
-  };
+  data: ProgramHighlightsData;
   timestamp: string;
   path: string;
   method: string;
-};
+}
+// breakdown
 
-export type ProgramParams = {
-  limit?: number;
-  page?: number;
-};
+export interface WeeklyEnrollment {
+  id: string;
+  name: string;
+  users: number;
+  completionRate: number;
+}
+
+export interface WeeklyEnrollmentsResponse {
+  success: boolean;
+  data: WeeklyEnrollment[];
+  timestamp: string;
+  path: string;
+  method: string;
+}

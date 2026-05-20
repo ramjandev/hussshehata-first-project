@@ -1,3 +1,5 @@
+import type { ExerciseType } from "./newProgram";
+
 export interface ProgrammesResponse {
   success: boolean;
   data: ProgrammesData;
@@ -19,12 +21,15 @@ export interface Programme {
   status: string;
   description: string;
   isActive: boolean;
+  isDeleted: boolean;
+  isPublished: boolean;
+  isPremium: boolean;
   features: string[];
   tags: string[];
   createdAt: string;
   updatedAt: string;
   weeks: Week[];
-  purchases: any[]; // You can refine this if you get the structure later
+  purchases: any[];
 }
 
 export interface Week {
@@ -74,7 +79,7 @@ export interface Exercise {
   id: string;
   dayId: string;
   name: string;
-  exerciseType: string;
+  exerciseType: ExerciseType;
   exerciseFor: string;
   description: string | null;
   image: string | null;

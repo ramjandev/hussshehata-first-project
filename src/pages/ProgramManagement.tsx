@@ -1,6 +1,7 @@
 import CommonCard from "@/common/CommonCard";
 import DashboardTopSection from "@/common/DashboardTopSection";
 import AllProgram from "@/components/programManagement/AllProgram";
+import DeleteProgram from "@/components/programManagement/deleteProgram/DeleteProgram";
 import CreateProgramModal from "@/components/programManagement/modal/CreateProgramModal";
 import ProgramAnalytics from "@/components/programManagement/ProgramAnalytics";
 import Training from "@/components/programManagement/Training";
@@ -49,6 +50,7 @@ const ProgramManagement = () => {
     "All Programs",
     "Training Methods Library",
     "Program Analytics",
+    "Delete Program",
   ];
 
   const { isProgramModalOpen } = useAppSelector((state) => state.program);
@@ -74,6 +76,7 @@ const ProgramManagement = () => {
       {activeTab === "All Programs" && <AllProgram />}
       {activeTab === "Training Methods Library" && <Training />}
       {activeTab === "Program Analytics" && <ProgramAnalytics />}
+      {activeTab === "Delete Program" && <DeleteProgram />}
       {isProgramModalOpen && <CreateProgramModal />}
     </div>
   );

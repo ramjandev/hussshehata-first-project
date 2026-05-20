@@ -4,7 +4,11 @@ import type { ProgramPayloadForBasic } from "@/components/programManagement/prog
 import { baseAPI } from "@/store/baseApi/baseApi";
 import type { ActivityTrackingResponse } from "./types/activity";
 import type { ProgrammesResponse } from "./types/allProgram";
-import type { ProgramAnalyticsResponse, ProgramParams } from "./types/analytic";
+import type {
+  ProgramHighlightsResponse,
+  WeeklyEnrollmentsResponse,
+} from "./types/analytic";
+import type { DeletedProgrammeResponse } from "./types/deletePrgraom";
 import type { SingleExerciseResponse, WeekBody } from "./types/exercise";
 import type { MethodPayload, TrainingMethodsResponse } from "./types/method";
 import type {
@@ -16,6 +20,13 @@ import type { GetUsersParams, userManagementResponse } from "./types/review";
 
 export const programAPI = baseAPI.injectEndpoints({
   endpoints: (build) => ({
+    toggleProgram: build.mutation<void, string>({
+      query: (id) => ({
+        url: `/updated-programme/admin/toggle-programme-is-premium/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["programs"],
+    }),
     createProgram: build.mutation<void, ProgramPayload>({
       query: (data) => ({
         url: `/updated-programme/create-new-programme`,
@@ -47,6 +58,21 @@ export const programAPI = baseAPI.injectEndpoints({
       }),
       invalidatesTags: ["programs"],
     }),
+    getallDeletedProgram: build.query<DeletedProgrammeResponse, void>({
+      query: () => ({
+        url: `/updated-programme/get-deleted-programmes`,
+        method: "GET",
+      }),
+      providesTags: ["programs"],
+    }),
+    getBackDeletedProgram: build.mutation<ProgrammesResponse, string>({
+      query: (id) => ({
+        url: `/updated-programme/undo-delete-program/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["programs"],
+    }),
+    // methods
     postMethod: build.mutation<any, MethodPayload>({
       query: (data) => ({
         url: `/add-traning-method`,
@@ -94,11 +120,16 @@ export const programAPI = baseAPI.injectEndpoints({
       }),
     }),
     //program analytics
-    getProgramAnalytics: build.query<ProgramAnalyticsResponse, ProgramParams>({
-      query: (params) => ({
-        url: `/admin/programs/analytics/performance`,
+    getProgramAnalytics: build.query<ProgramHighlightsResponse, void>({
+      query: () => ({
+        url: `/admin-dashboard-analytics/program-highlights`,
         method: "GET",
-        params,
+      }),
+    }),
+    getProgramBreakdown: build.query<WeeklyEnrollmentsResponse, void>({
+      query: () => ({
+        url: `/admin-dashboard-analytics/weekly-enrollments`,
+        method: "GET",
       }),
     }),
     updateProgramBasic: build.mutation<
@@ -222,4 +253,8 @@ export const {
   usePublishProgramMutation,
   usePremiumToggleMutation,
   useAllPremiumToggleMutation,
+  useGetBackDeletedProgramMutation,
+  useGetallDeletedProgramQuery,
+  useGetProgramBreakdownQuery,
+  useToggleProgramMutation,
 } = programAPI;

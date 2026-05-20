@@ -1,17 +1,17 @@
 import SectionHeader from "@/common/button/SectionHeader";
 import LoadingStatus from "@/common/custom/LoadingStatus";
-import Pagination from "@/common/custom/Pagination";
-import { useGetProgramAnalyticsQuery } from "@/store/features/program/programAPI";
-import { useState } from "react";
+import {
+  useGetProgramAnalyticsQuery,
+  useGetProgramBreakdownQuery,
+} from "@/store/features/program/programAPI";
 
 const tableHeaders = [
   { label: "Program Name", align: "text-left" },
-  { label: "Type", align: "text-center xl:table-cell hidden" },
+  // { label: "Type", align: "text-center xl:table-cell hidden" },
   { label: "Enrolment", align: "text-center md:table-cell hidden" },
   { label: "Active Users", align: "text-center lg:table-cell hidden" },
   { label: "Completion", align: "text-center" },
-  { label: "Revenue", align: "text-center md:table-cell hidden" },
-  { label: "Trend", align: "text-center sm:table-cell hidden" },
+  // { label: "Revenue", align: "text-center md:table-cell hidden" },
 ];
 
 const CompletionBar: React.FC<{ value: number }> = ({ value }) => (
@@ -37,67 +37,40 @@ export const tableDesign = {
 };
 
 const ProgramAnalytics = () => {
-  const [page, setPage] = useState(1);
-  const { data, isLoading } = useGetProgramAnalyticsQuery({
-    page,
-  });
+  const { data } = useGetProgramAnalyticsQuery();
+  const { data: breakdown, isLoading } = useGetProgramBreakdownQuery();
 
-  const programAnalytics = data?.data?.data?.data ?? [];
-
+  const program = data?.data;
+  const programAnalytics = breakdown?.data ?? [];
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {programAnalytics.slice(0, 2).map((program, index) => (
-          <div
-            key={index}
-            className={`${index % 2 === 0 ? "bg-blue-600" : "bg-green-600"} rounded-xl p-6 text-white`}
-          >
-            <p className="text-sm opacity-90 mb-2">Program Name</p>
-            <h3 className="text-2xl font-bold mb-1">{program.name}</h3>
-            <p className="text-sm opacity-90 mb-4">
-              {program.enrollments} enrollments
-            </p>
-            <p className="text-sm opacity-75">
-              {program.completionRate}% completion rate
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <SectionHeader
-          title="Enrollment Programs"
-          description="By enrollments and completion rate"
-        />
-
-        <div className="space-y-4">
-          {programAnalytics.map((program, index) => (
-            <div key={index}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-900">
-                  {program.name}
-                </span>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-gray-600">
-                    {program.activeUsers} users
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    {program.completedCount}%
-                  </span>
-                </div>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full"
-                  style={{ width: `${program.completionRate}%` }}
-                ></div>
-              </div>
-            </div>
-          ))}
+        <div className={`bg-green-600 rounded-xl p-6 text-white`}>
+          <p className="text-sm opacity-90 mb-2">Highest Completion Program</p>
+          <h3 className="text-2xl font-bold mb-1">
+            {program?.highestCompletion?.name}
+          </h3>
+          <p className="text-sm opacity-90 mb-4">
+            {program?.highestCompletion?.enrollments} enrollments
+          </p>
+          <p className="text-sm opacity-75">
+            {program?.highestCompletion?.completionRate}% completion rate
+          </p>
+        </div>
+        <div className={`bg-blue-600  rounded-xl p-6 text-white`}>
+          <p className="text-sm opacity-90 mb-2">Most Popular Program</p>
+          <h3 className="text-2xl font-bold mb-1">
+            {program?.mostPopular?.name}
+          </h3>
+          <p className="text-sm opacity-90 mb-4">
+            {program?.mostPopular?.enrollments} enrollments
+          </p>
+          <p className="text-sm opacity-75">
+            {program?.mostPopular?.completionRate}% completion rate
+          </p>
         </div>
       </div>
 
-      {/* Program Performance Breakdown */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <SectionHeader
           title="Program Performance Breakdown"
@@ -123,63 +96,37 @@ const ProgramAnalytics = () => {
                     ${header.align}  ${index === 0 ? "text-left!" : ""}
                   `}
                       >
-                        {header.label}
+                        {header?.label}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {programAnalytics.map((program) => (
+                  {programAnalytics?.map((program) => (
                     <tr key={program.id} className={tableDesign.tr}>
-                      <td className={`${tableDesign.td}  text-left! `}>
-                        {program.name}
+                      <td className={`${tableDesign?.td}  text-left! `}>
+                        {program?.name}
                       </td>
 
                       <td className={`xl:table-cell hidden ${tableDesign.td}`}>
                         <span className="inline-block bg-purple-100 text-purple-600 text-xs font-medium px-3 py-1 rounded-full">
-                          {program.type}
+                          {program?.name}
                         </span>
                       </td>
 
-                      <td className={`md:table-cell hidden ${tableDesign.td}`}>
-                        {program.enrollments.toLocaleString()}
-                      </td>
-
                       <td className={`lg:table-cell hidden ${tableDesign.td}`}>
-                        {program.activeUsers.toLocaleString()}
+                        {program?.users?.toLocaleString()}
                       </td>
 
                       <td className={` ${tableDesign.td}`}>
                         <div className="flex justify-center">
-                          <CompletionBar value={program.completionRate} />
+                          <CompletionBar value={program?.completionRate} />
                         </div>
-                      </td>
-
-                      <td className={`md:table-cell hidden ${tableDesign.td}`}>
-                        ${program.estimatedRevenue.toLocaleString()}
-                      </td>
-
-                      <td
-                        className={` sm:table-cell hidden  ${tableDesign.td}`}
-                      >
-                        <p
-                          className={`${program.trend === "DECLINING" ? "text-red-500" : "text-green-500"}`}
-                        >
-                          {program.trendIcon}
-                        </p>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-
-            <div className="py-5">
-              <Pagination
-                currentPage={page}
-                totalPages={data?.data?.data.meta.totalPages || 1}
-                onPageChange={setPage}
-              />
             </div>
           </>
         )}

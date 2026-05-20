@@ -7,7 +7,7 @@ interface ProgramCardProps {
   id: string;
   title: string;
   category?: "Advanced" | "Beginner" | "Intermediate" | string;
-  position: number;
+  position?: number;
   icon?: React.ReactNode;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;

@@ -58,12 +58,7 @@ const DashboardCard = () => {
             iconColor={card.iconColor}
             value={card.value}
             title={card.title}
-            subtitle={card.subtitle}
-            subtitleColor={card.subtitleColor}
             // percentage={card.percentage}
-            showSplit={true}
-            splitPremium={card.subtitle.split(" ")[0]}
-            splitFree={card.subtitle.split(" ")[2]}
           />
         );
       })}

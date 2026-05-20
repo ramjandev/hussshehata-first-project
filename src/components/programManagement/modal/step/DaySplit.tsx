@@ -14,7 +14,7 @@ import {
 
 import CommonSelect from "@/common/custom/CommonSelect";
 import CommonSwitch from "@/common/custom/CommonSwitch";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, Trash2, X } from "lucide-react";
 import { useState } from "react";
 
 import { useAppDispatch, useAppSelector } from "@/store/hook";
@@ -27,7 +27,12 @@ import {
 } from "@/store/baseApi/programSlice/program.slice";
 import { useGetMethodQuery } from "@/store/features/program/programAPI";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import {
+  type Control,
+  Controller,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import { z } from "zod";
 
 export type TrainingDayType = "PUSH" | "PULL" | "LEGS";
@@ -48,6 +53,7 @@ export interface Day {
   name: string;
   trainingMethod: string;
   description: string;
+  accessories: string[];
   howToExecute: string;
   exerciseHint: string;
   hasBFR: boolean;
@@ -59,7 +65,6 @@ export interface Week {
   weekNumber: number;
   trainingDays: string[];
   restDays: string[];
-  accessories: string[];
   days: Day[];
 }
 
@@ -87,8 +92,8 @@ const dayConfigSchema = z.object({
     .min(1, "Select at least one muscle group"),
   method: z.string().min(1, "Training method is required"),
   description: z.string().min(1, "Description is required"),
-  // howToExecute: z.string().min(1, "How to execute is required"),
   exerciseHint: z.string().min(1, "Exercise hint is required"),
+  accessories: z.array(z.object({ value: z.string() })),
   bfr: z.boolean(),
   abs: z.boolean(),
 });
@@ -163,8 +168,8 @@ const createDefaultWeek = (weekNumber: number): WeekData => ({
       selectedMuscles: ["Chest", "Shoulders", "Triceps"],
       method: "5×5",
       description: "",
-
       exerciseHint: "",
+      accessories: [{ value: "" }],
       bfr: false,
       abs: false,
     },
@@ -174,8 +179,8 @@ const createDefaultWeek = (weekNumber: number): WeekData => ({
       selectedMuscles: ["Back", "Biceps", "Traps"],
       method: "Max-OT",
       description: "",
-
       exerciseHint: "",
+      accessories: [{ value: "" }],
       bfr: false,
       abs: false,
     },
@@ -185,15 +190,14 @@ const createDefaultWeek = (weekNumber: number): WeekData => ({
       selectedMuscles: ["Quads", "Hamstrings", "Calves"],
       method: "Burns",
       description: "",
-
       exerciseHint: "",
+      accessories: [{ value: "" }],
       bfr: false,
       abs: false,
     },
   ],
 });
 
-// Transform form data into the ProgramPayload weeks shape
 const transformWeeksForStore = (formWeeks: WeekData[]) => {
   return formWeeks.map((week) => ({
     name: `Week ${week.weekNumber}`,
@@ -207,9 +211,9 @@ const transformWeeksForStore = (formWeeks: WeekData[]) => {
         (m) => muscleToEnum[m] ?? m.toUpperCase(),
       ),
       description: config.description,
-
       trainingMethodId: config.method,
       executeHint: config.exerciseHint,
+      accessories: config.accessories.map((a) => a.value).filter(Boolean),
       isEnableBFR: config.bfr,
       isEnableABS: config.abs,
       exercises: [],
@@ -235,7 +239,6 @@ const enumToFocus: Record<string, string> = {
   LEGS: "Leg",
 };
 
-// Convert store Week[] back into WeekData[] for form defaultValues
 const restoreWeeksFromStore = (
   storeWeeks: {
     name: string;
@@ -249,6 +252,7 @@ const restoreWeeksFromStore = (
       description: string;
       trainingMethodId: string;
       executeHint: string;
+      accessories?: string[];
       isEnableBFR: boolean;
       isEnableABS: boolean;
     }[];
@@ -265,6 +269,11 @@ const restoreWeeksFromStore = (
       method: day.trainingMethodId,
       description: day.description,
       exerciseHint: day.executeHint,
+      // restore string[] → { value: string }[]
+      accessories:
+        (day.accessories ?? []).length > 0
+          ? (day.accessories ?? []).map((a) => ({ value: a }))
+          : [{ value: "" }],
       bfr: day.isEnableBFR,
       abs: day.isEnableABS,
     })),
@@ -272,6 +281,63 @@ const restoreWeeksFromStore = (
 
 const FieldError = ({ message }: { message?: string }) =>
   message ? <p className={inputClass.error}>{message}</p> : null;
+
+interface AccessoriesFieldProps {
+  control: Control<FormValues>;
+  weekIdx: number;
+  dayIdx: number;
+}
+
+const AccessoriesField = ({
+  control,
+  weekIdx,
+  dayIdx,
+}: AccessoriesFieldProps) => {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `weeks.${weekIdx}.dayConfigs.${dayIdx}.accessories`,
+  });
+
+  return (
+    <div className="mb-4">
+      <label className={inputClass.label}>Accessories</label>
+      <div className="space-y-2">
+        {fields.map((field, index) => (
+          <div key={field.id} className="flex gap-2">
+            <Controller
+              control={control}
+              name={`weeks.${weekIdx}.dayConfigs.${dayIdx}.accessories.${index}.value`}
+              render={({ field: inputField }) => (
+                <input
+                  {...inputField}
+                  className={inputClass.input}
+                  placeholder={`Accessory ${index + 1}`}
+                />
+              )}
+            />
+            <button
+              type="button"
+              onClick={() => {
+                if (fields.length > 1) remove(index);
+              }}
+              className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-300 transition-colors shrink-0 self-center"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => append({ value: "" })}
+        className="mt-2 text-sm text-[#A78BFA] cursor-pointer"
+      >
+        + Add Accessory
+      </button>
+    </div>
+  );
+};
 
 const DaySplit = () => {
   const { program } = useAppSelector((state) => state.program);
@@ -346,9 +412,9 @@ const DaySplit = () => {
         focus: focusType,
         selectedMuscles: defaultMuscles[focusType],
         method: methodOptions[index % methodOptions.length].value,
-
         description: "",
         exerciseHint: "",
+        accessories: [{ value: "" }],
         bfr: false,
         abs: false,
       };
@@ -528,11 +594,9 @@ const DaySplit = () => {
           </div>
 
           {[...(currentWeek?.dayConfigs ?? [])]
-            .sort((a, b) => a.day - b.day)
-            .map((config, sortedIndex) => {
-              const dayIdx = currentWeek.dayConfigs.findIndex(
-                (c) => c.day === config.day,
-              );
+            .map((config, originalIdx) => ({ config, originalIdx }))
+            .sort((a, b) => a.config.day - b.config.day)
+            .map(({ config, originalIdx: dayIdx }, sortedIndex) => {
               const dayErrors = getDayErrors(dayIdx);
 
               return (
@@ -690,6 +754,13 @@ const DaySplit = () => {
                     />
                     <FieldError message={dayErrors?.exerciseHint?.message} />
                   </div>
+
+                  {/* Accessories */}
+                  <AccessoriesField
+                    control={control}
+                    weekIdx={activeWeekIndex}
+                    dayIdx={dayIdx}
+                  />
 
                   {/* BFR */}
                   <div className="mb-4">

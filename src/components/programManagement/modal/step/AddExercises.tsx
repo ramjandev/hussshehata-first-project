@@ -21,22 +21,20 @@ interface WorkoutSet {
   sequence: number;
 }
 
-// Shape of a single exercise stored in the program slice
 interface StoredExercise {
   name: string;
   exerciseType: ExerciseType;
-  exerciseFor: string; // "main" | "bfr" | "abs"
+  exerciseFor: string;
   description?: string;
   defaultSet: number;
   defaultReps: number;
   sets: WorkoutSet[];
 }
 
-// Context passed down to modals so they know where to save
 interface ExerciseContext {
   weekIndex: number;
   dayIndex: number;
-  exerciseFor: "main" | "bfr" | "abs";
+  exerciseType: ExerciseType;
 }
 
 const AddExercises = () => {
@@ -54,22 +52,24 @@ const AddExercises = () => {
   const [editContext, setEditContext] = useState<{
     weekIndex: number;
     dayIndex: number;
-    exerciseFor: "main" | "bfr" | "abs";
+    exerciseType: ExerciseType;
     exerciseIndex: number;
   } | null>(null);
 
   const handleOpenAddExercise = (
     weekIndex: number,
     dayIndex: number,
-    exerciseFor: "main" | "bfr" | "abs",
+    exerciseType: ExerciseType,
   ) => {
-    setExerciseContext({ weekIndex, dayIndex, exerciseFor });
+    setExerciseContext({ weekIndex, dayIndex, exerciseType });
     setShowExerciseModal(true);
   };
 
+  console.log("program", program);
+  // AddExercises.tsx
   const handleAddExercise = (exercise: StoredExercise) => {
     if (!exerciseContext) return;
-    const { weekIndex, dayIndex, exerciseFor } = exerciseContext;
+    const { weekIndex, dayIndex } = exerciseContext;
 
     const updatedWeeks = weeks.map((week, wIdx) => {
       if (wIdx !== weekIndex) return week;
@@ -80,7 +80,7 @@ const AddExercises = () => {
           const currentExercises = day.exercises ?? [];
           return {
             ...day,
-            exercises: [...currentExercises, { ...exercise, exerciseFor }],
+            exercises: [...currentExercises, exercise],
           };
         }),
       };
@@ -94,12 +94,12 @@ const AddExercises = () => {
   const handleDeleteExercise = (
     weekIndex: number,
     dayIndex: number,
-    exerciseFor: "main" | "bfr" | "abs",
+    exerciseType: ExerciseType,
     exerciseIndex: number,
   ) => {
     const typeExercises = getExercisesByType(
       weeks[weekIndex]?.days[dayIndex]?.exercises ?? [],
-      exerciseFor,
+      exerciseType,
     );
     const targetExercise = typeExercises[exerciseIndex];
 
@@ -125,12 +125,12 @@ const AddExercises = () => {
   const handleOpenEditExercise = (
     weekIndex: number,
     dayIndex: number,
-    exerciseFor: "main" | "bfr" | "abs",
+    exerciseType: ExerciseType,
     exerciseIndex: number,
   ) => {
     const typeExercises = getExercisesByType(
       weeks[weekIndex]?.days[dayIndex]?.exercises ?? [],
-      exerciseFor,
+      exerciseType,
     );
     const exercise = typeExercises[exerciseIndex];
     if (!exercise) return;
@@ -143,18 +143,17 @@ const AddExercises = () => {
     };
 
     setSelectSet(forModal);
-    setEditContext({ weekIndex, dayIndex, exerciseFor, exerciseIndex });
+    setEditContext({ weekIndex, dayIndex, exerciseType, exerciseIndex });
     setShowSetModal(true);
   };
 
-  // Called by UpdateSetsModal when user saves — receives WorkoutSet[] directly
   const handleSaveUpdatedSets = (updatedSets: WorkoutSet[]) => {
     if (!editContext) return;
-    const { weekIndex, dayIndex, exerciseFor, exerciseIndex } = editContext;
+    const { weekIndex, dayIndex, exerciseType, exerciseIndex } = editContext;
 
     const typeExercises = getExercisesByType(
       weeks[weekIndex]?.days[dayIndex]?.exercises ?? [],
-      exerciseFor,
+      exerciseType,
     );
     const originalExercise = typeExercises[exerciseIndex];
 
@@ -199,9 +198,9 @@ const AddExercises = () => {
           <div key={weekIndex} className="space-y-4">
             {(week.days ?? []).map((dayConfig, dayIndex) => {
               const allExercises = dayConfig.exercises ?? [];
-              const mainExercises = getExercisesByType(allExercises, "main");
-              const bfrExercises = getExercisesByType(allExercises, "bfr");
-              const absExercises = getExercisesByType(allExercises, "abs");
+              const mainExercises = getExercisesByType(allExercises, "Main");
+              const bfrExercises = getExercisesByType(allExercises, "BFR");
+              const absExercises = getExercisesByType(allExercises, "ABS");
 
               return (
                 <div
@@ -245,7 +244,7 @@ const AddExercises = () => {
                       <ActionButton
                         variant="add"
                         onClick={() => {
-                          handleOpenAddExercise(weekIndex, dayIndex, "main");
+                          handleOpenAddExercise(weekIndex, dayIndex, "Main");
                           setExerciseType("MAIN_EXERCISE");
                         }}
                         title="Add Main Exercise"
@@ -272,7 +271,7 @@ const AddExercises = () => {
                                   handleOpenEditExercise(
                                     weekIndex,
                                     dayIndex,
-                                    "main",
+                                    "Main",
                                     idx,
                                   )
                                 }
@@ -284,7 +283,7 @@ const AddExercises = () => {
                                   handleDeleteExercise(
                                     weekIndex,
                                     dayIndex,
-                                    "main",
+                                    "Main",
                                     idx,
                                   )
                                 }
@@ -314,7 +313,7 @@ const AddExercises = () => {
                       <ActionButton
                         variant="add"
                         onClick={() => {
-                          handleOpenAddExercise(weekIndex, dayIndex, "bfr");
+                          handleOpenAddExercise(weekIndex, dayIndex, "BFR");
                           setExerciseType("BFR_EXERCISE");
                         }}
                         title="Add Bfr Exercise"
@@ -339,7 +338,7 @@ const AddExercises = () => {
                                   handleOpenEditExercise(
                                     weekIndex,
                                     dayIndex,
-                                    "bfr",
+                                    "BFR",
                                     idx,
                                   )
                                 }
@@ -352,7 +351,7 @@ const AddExercises = () => {
                                   handleDeleteExercise(
                                     weekIndex,
                                     dayIndex,
-                                    "bfr",
+                                    "BFR",
                                     idx,
                                   )
                                 }
@@ -382,7 +381,7 @@ const AddExercises = () => {
                       <ActionButton
                         variant="add"
                         onClick={() => {
-                          handleOpenAddExercise(weekIndex, dayIndex, "abs");
+                          handleOpenAddExercise(weekIndex, dayIndex, "ABS");
 
                           setExerciseType("ABS_EXERCISE");
                         }}
@@ -408,7 +407,7 @@ const AddExercises = () => {
                                   handleOpenEditExercise(
                                     weekIndex,
                                     dayIndex,
-                                    "abs",
+                                    "ABS",
                                     idx,
                                   )
                                 }
@@ -421,7 +420,7 @@ const AddExercises = () => {
                                   handleDeleteExercise(
                                     weekIndex,
                                     dayIndex,
-                                    "abs",
+                                    "ABS",
                                     idx,
                                   )
                                 }
@@ -494,9 +493,9 @@ const AddExercises = () => {
 
 function getExercisesByType(
   exercises: StoredExercise[],
-  type: "main" | "bfr" | "abs",
+  type: ExerciseType,
 ): StoredExercise[] {
-  return exercises.filter((ex) => ex.exerciseFor === type);
+  return exercises.filter((ex) => ex.exerciseType === type);
 }
 
 export default AddExercises;

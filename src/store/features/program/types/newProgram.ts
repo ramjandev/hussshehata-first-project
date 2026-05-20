@@ -17,7 +17,7 @@ interface WorkoutSet {
 interface Exercise {
   name: string;
   exerciseType: ExerciseType;
-  exerciseFor: string; // e.g. "Chest"
+  exerciseFor: string; //
   description?: string;
   defaultSet: number;
   defaultReps: number;
@@ -30,6 +30,7 @@ interface TrainingDay {
   dayFocus: string;
   dayFocusMuscle: string[];
   description: string;
+  accessories: string[];
   trainingMethodId: string;
   executeHint: string;
   isEnableBFR: boolean;
@@ -85,7 +86,7 @@ export interface ExerciseSingle {
   id: UUID;
   dayId: UUID;
   name: string;
-  exerciseType: string;
+  exerciseType: ExerciseType;
   exerciseFor: string;
   description: string | null;
   image: string | null;
@@ -163,6 +164,7 @@ export interface Programme {
   isActive: boolean;
   isDeleted: boolean;
   isPublished: boolean;
+  isPremium: boolean;
   features: string[];
   tags: string[];
   createdAt: ISODateString;
