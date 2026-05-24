@@ -1,13 +1,16 @@
 import ActionButton from "@/common/button/ActionButton";
 import CommonHeader from "@/common/header/CommonHeader";
+import type { publishedStatus } from "@/store/features/program/types/newProgram";
 import { Edit2, Trash2 } from "lucide-react";
 import React from "react";
+import { getLevelColor } from "../programManagement/AllProgram";
 
 interface ProgramCardProps {
   id: string;
   title: string;
-  category?: "Advanced" | "Beginner" | "Intermediate" | string;
-  position?: number;
+  description?: string;
+  week?: number;
+  status?: publishedStatus;
   icon?: React.ReactNode;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
@@ -18,27 +21,15 @@ interface ProgramCardProps {
 const ProgramCard: React.FC<ProgramCardProps> = ({
   id,
   title,
-  category,
-  position,
+  status,
+  week,
   icon,
+  description,
   iconAction,
   onEdit,
   onDelete,
   isLoading,
 }) => {
-  const getCategoryStyles = () => {
-    switch (category) {
-      case "Advanced":
-        return "bg-red-100 text-red-700";
-      case "Beginner":
-        return "bg-green-100 text-green-700";
-      case "Intermediate":
-        return "bg-blue-100 text-blue-700";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
-
   return (
     <div className="">
       <div className="flex items-center justify-between gap-2">
@@ -53,22 +44,26 @@ const ProgramCard: React.FC<ProgramCardProps> = ({
               <CommonHeader size="lg" className="line-clamp-1">
                 {title}
               </CommonHeader>
-              {category && (
+
+              {status && (
                 <span
-                  className={`text-xs px-3 py-1 rounded-full hidden md:block ${getCategoryStyles()}`}
+                  className={`text-xs px-3 py-1 rounded-full hidden md:block ${getLevelColor(status)}`}
                 >
-                  {category}
+                  {status}
                 </span>
               )}
             </div>
-
-            <div className="flex items-center gap-2 mt-1 flex-wrap">
-              <p className="text-sm text-gray-600">Position {position}</p>
-              <span
-                className={`text-xs px-3 py-1 rounded-full md:hidden ${getCategoryStyles()}`}
-              >
-                {category}
-              </span>
+            <div className="   ">
+              {description && (
+                <CommonHeader size="sm" className="hidden md:block">
+                  {description}
+                </CommonHeader>
+              )}
+              {week && (
+                <CommonHeader size="sm" className="mt-1">
+                  {week} Weeks
+                </CommonHeader>
+              )}
             </div>
           </div>
         </div>

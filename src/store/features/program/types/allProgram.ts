@@ -1,4 +1,4 @@
-import type { ExerciseType } from "./newProgram";
+import type { ExerciseType, publishedStatus } from "./newProgram";
 
 export interface ProgrammesResponse {
   success: boolean;
@@ -18,7 +18,7 @@ export interface ProgrammesData {
 export interface Programme {
   id: string;
   name: string;
-  status: string;
+  status: publishedStatus;
   description: string;
   isActive: boolean;
   isDeleted: boolean;
@@ -53,7 +53,7 @@ export interface TrainingDay {
   dayFocusMuscle: string[];
   trainingMethodId: string;
   description: string;
-  accessories: any[];
+  accessories: string[];
   executeHint: string;
   isEnableBFR: boolean;
   isEnableABS: boolean;

@@ -58,7 +58,6 @@ const DashboardCard = () => {
             iconColor={card.iconColor}
             value={card.value}
             title={card.title}
-            // percentage={card.percentage}
           />
         );
       })}

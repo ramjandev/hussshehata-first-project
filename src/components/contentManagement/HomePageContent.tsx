@@ -18,14 +18,9 @@ const HomePageContent = () => {
                 key={program.id}
                 id={program.id}
                 title={program.name}
-                category={program.status}
-                position={2}
-                icon={
-                  <div className="flex  items-center text-gray-400 gap-0.5 ">
-                    <div className="text-xs">↑</div>
-                    <div className="text-xs">↓</div>
-                  </div>
-                }
+                description={program.description}
+                week={program.weeks.length}
+                status={program.status}
                 iconAction={() => {}}
               />
             </div>

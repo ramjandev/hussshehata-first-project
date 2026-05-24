@@ -28,3 +28,19 @@ export type WeekBody = {
   isPremium: boolean;
   name: string;
 };
+
+// dashboard card
+
+interface ProgramAnalytics {
+  totalPrograme: number;
+  premiumProgramme: number;
+  activeEnrollment: number;
+}
+
+export interface DashboardCardStartResponse {
+  success: boolean;
+  data: ProgramAnalytics;
+  timestamp: string;
+  path: string;
+  method: string;
+}

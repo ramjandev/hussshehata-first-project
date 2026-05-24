@@ -9,8 +9,16 @@ import type {
   WeeklyEnrollmentsResponse,
 } from "./types/analytic";
 import type { DeletedProgrammeResponse } from "./types/deletePrgraom";
-import type { SingleExerciseResponse, WeekBody } from "./types/exercise";
-import type { MethodPayload, TrainingMethodsResponse } from "./types/method";
+import type {
+  DashboardCardStartResponse,
+  SingleExerciseResponse,
+  WeekBody,
+} from "./types/exercise";
+import type {
+  MethodPayload,
+  SingleTrainingMethodResponse,
+  TrainingMethodsResponse,
+} from "./types/method";
 import type {
   ProgramPayload,
   ProgramStatusParams,
@@ -84,6 +92,13 @@ export const programAPI = baseAPI.injectEndpoints({
     getMethod: build.query<TrainingMethodsResponse, void>({
       query: () => ({
         url: `/add-traning-method`,
+        method: "GET",
+      }),
+      providesTags: ["method"],
+    }),
+    getSingleMethod: build.query<SingleTrainingMethodResponse, string>({
+      query: (id) => ({
+        url: `/add-traning-method/${id}`,
         method: "GET",
       }),
       providesTags: ["method"],
@@ -223,6 +238,14 @@ export const programAPI = baseAPI.injectEndpoints({
       }),
       invalidatesTags: ["programs"],
     }),
+
+    StartForDash: build.query<DashboardCardStartResponse, void>({
+      query: () => ({
+        url: `/admin-dashboard-analytics/getProgrammeAnalytics`,
+        method: "GET",
+      }),
+      providesTags: ["exercises"],
+    }),
   }),
 });
 
@@ -234,6 +257,7 @@ export const {
   //method
   usePostMethodMutation,
   useGetMethodQuery,
+  useGetSingleMethodQuery,
   useDeleteMethodMutation,
   useUpdateMethodMutation,
   // user management
@@ -257,4 +281,6 @@ export const {
   useGetallDeletedProgramQuery,
   useGetProgramBreakdownQuery,
   useToggleProgramMutation,
+  //dashboard
+  useStartForDashQuery,
 } = programAPI;

@@ -6,43 +6,39 @@ import CreateProgramModal from "@/components/programManagement/modal/CreateProgr
 import ProgramAnalytics from "@/components/programManagement/ProgramAnalytics";
 import Training from "@/components/programManagement/Training";
 import { openProgramModal } from "@/store/baseApi/programSlice/program.slice";
+import { useStartForDashQuery } from "@/store/features/program/programAPI";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
-import { Clock, Crown, Dumbbell, Users } from "lucide-react";
+import { Crown, Dumbbell, Users } from "lucide-react";
 import { useState } from "react";
 import UserTabs from "./UserTabs";
 export const cardGrid =
-  "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ";
+  "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-6 ";
 const ProgramManagement = () => {
   const [activeTab, setActiveTab] = useState("All Programs");
+
+  const { data } = useStartForDashQuery();
 
   const statsData = [
     {
       icon: Dumbbell,
       iconBgColor: "bg-purple-100",
       iconColor: "text-purple-600",
-      value: "4",
+      value: data?.data?.totalPrograme || 0,
       title: "Total Programs",
     },
     {
       icon: Users,
       iconBgColor: "bg-green-100",
       iconColor: "text-green-600",
-      value: "987",
-      title: "Active Enrolments",
+      value: data?.data?.activeEnrollment || 0,
+      title: "Active Enrolment",
     },
     {
       icon: Crown,
       iconBgColor: "bg-cyan-100",
       iconColor: "text-cyan-600",
-      value: "01",
+      value: data?.data?.premiumProgramme || 0,
       title: "Premium Programs",
-    },
-    {
-      icon: Clock,
-      iconBgColor: "bg-orange-100",
-      iconColor: "text-orange-600",
-      value: "78%",
-      title: "Avg Completion",
     },
   ];
 

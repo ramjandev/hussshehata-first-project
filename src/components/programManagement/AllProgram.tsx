@@ -3,6 +3,7 @@ import ButtonWithLoading from "@/common/button/ButtonWithLoading";
 import DashboardCardSkeleton from "@/common/button/DashboardCardSkeleton";
 import SectionHeader from "@/common/button/SectionHeader";
 import CommonSelect from "@/common/custom/CommonSelect";
+import CommonHeader from "@/common/header/CommonHeader";
 import {
   useDeleteProgramMutation,
   useGetallProgramQuery,
@@ -13,18 +14,18 @@ import type { Programme } from "@/store/features/program/types/allProgram";
 import type { publishedStatus } from "@/store/features/program/types/newProgram";
 import { Edit, Eye, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { FaCrown } from "react-icons/fa6";
 import { MdPublishedWithChanges } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import ProgramUpdateModalForBasic from "./programDetails/ProgramUpdateModalForBasic";
 
-export const getLevelColor = (level: string) => {
-  switch (level) {
-    case "Advanced":
+export const getLevelColor = (status: publishedStatus) => {
+  switch (status) {
+    case "DRAFT":
       return "bg-red-100 text-red-700";
-    case "Beginner":
+    case "PUBLISHED":
       return "bg-green-100 text-green-700";
-    case "Intermediate":
-      return "bg-yellow-100 text-yellow-700";
+
     default:
       return "bg-gray-100 text-gray-700";
   }
@@ -73,7 +74,7 @@ const AllProgram = () => {
     }
   };
 
-  const [toggleId, setToggleId] = useState(null);
+  const [toggleId, setToggleId] = useState("");
   const [programToggle] = useToggleProgramMutation();
 
   const handleToggle = async (id: string) => {
@@ -83,7 +84,7 @@ const AllProgram = () => {
     } catch (error) {
       console.error(error);
     } finally {
-      setToggleId(null);
+      setToggleId("");
     }
   };
   return (
@@ -92,7 +93,10 @@ const AllProgram = () => {
         list.map((_, index) => <DashboardCardSkeleton key={index} />)
       ) : programs?.length > 0 ? (
         <div>
-          <div className="pb-4 flex justify-end">
+          <div className="pb-4 flex justify-between">
+            <h3 className="text-lg font-semibold text-gray-900">
+              All Programs
+            </h3>
             <CommonSelect
               onValueChange={setStatus}
               value={status}
@@ -102,6 +106,7 @@ const AllProgram = () => {
                 { label: "Draft", value: "DRAFT" },
               ]}
               placeholder="Select Status"
+              className="w-full sm:w-auto"
             />
           </div>
           <div className="space-y-4">
@@ -111,7 +116,7 @@ const AllProgram = () => {
                   key={program.id}
                   className="bg-white rounded-xl border border-gray-200 p-6"
                 >
-                  <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start justify-between ">
                     <div className="flex items-center gap-3">
                       <SectionHeader
                         title={program.name}
@@ -125,12 +130,36 @@ const AllProgram = () => {
                         {program.status}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
+                  </div>
+                  <div>
+                    <CommonHeader size="sm" className=" hidden lg:block">
+                      {program.description}
+                    </CommonHeader>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row  justify-between gap-6 mt-4">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Duration</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {program.weeks.length} weeks
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-center gap-2">
                       <ActionButton
                         onClick={() => handleToggle(program.id)}
                         variant="edit"
+                        className="w-full sm:w-auto"
+                        isDelete={toggleId === program.id}
                       >
-                        {!program.isPremium ? "Make basic" : "Make premium"}
+                        {toggleId === program.id ? (
+                          <ButtonWithLoading title="Processing.." />
+                        ) : (
+                          <>
+                            <FaCrown className="w-4 h-4" />
+                            {!program.isPremium ? "Make basic" : "Make premium"}
+                          </>
+                        )}
                       </ActionButton>
 
                       <ActionButton
@@ -138,6 +167,7 @@ const AllProgram = () => {
                           handlePublish(program.id);
                         }}
                         isDelete={publishingId === program.id}
+                        className="w-full sm:w-auto"
                       >
                         {publishingId === program.id ? (
                           <ButtonWithLoading title="Publishing.." />
@@ -154,6 +184,7 @@ const AllProgram = () => {
                             `/dashboard/program-management/${program.id}`,
                           );
                         }}
+                        className="w-full sm:w-auto"
                       >
                         <Eye className="w-4 h-4" />
                         View
@@ -162,6 +193,7 @@ const AllProgram = () => {
                         onClick={() => {
                           setSelectedProgram(program);
                         }}
+                        className="w-full sm:w-auto"
                       >
                         <Edit className="w-4 h-4" />
                         Edit
@@ -170,21 +202,10 @@ const AllProgram = () => {
                         onClick={() => handleDelete(program.id)}
                         isDelete={deletingId === program.id}
                         variant="delete"
+                        className="w-full sm:w-auto"
                       >
                         <Trash2 className="w-5 h-5" />
                       </ActionButton>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-3 gap-6">
-                    <div>
-                      <p className="text-sm text-gray-600 mb-1">Duration</p>
-                      <p className="text-sm font-medium text-gray-900">
-                        {program.weeks.length} weeks
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600 mb-1">Enrolment</p>
-                      <p className="text-sm font-medium text-gray-900">452</p>
                     </div>
                   </div>
                 </div>

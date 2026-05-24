@@ -33,8 +33,7 @@ const Premium = () => {
             <ProgramCard
               id={program.id}
               title={program.name}
-              category={program.status}
-              position={5}
+              status={program.status}
               icon={
                 <button className="text-gray-400 hover:text-gray-600 cursor-pointer">
                   {selectedProgramId === program.id ? (

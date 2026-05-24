@@ -69,7 +69,6 @@ const Execution = () => {
               <ProgramCard
                 id={note.id}
                 title={note.title}
-                position={note.position}
                 onEdit={() => {
                   setShowNoteModal(true);
                   setSelectedNote(note);

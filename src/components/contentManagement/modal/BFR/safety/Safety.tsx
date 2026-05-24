@@ -63,7 +63,7 @@ export const Safety: React.FC<SafetyProps> = ({
           safetyData.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-lg border border-gray-200 p-6"
+              className="bg-white rounded-lg border border-gray-200 p-6 overflow-hidden"
             >
               <CommonHeader size="md" className="!font-bold !text-black">
                 {item.title}

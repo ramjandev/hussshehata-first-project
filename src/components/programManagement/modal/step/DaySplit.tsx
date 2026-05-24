@@ -14,8 +14,8 @@ import {
 
 import CommonSelect from "@/common/custom/CommonSelect";
 import CommonSwitch from "@/common/custom/CommonSwitch";
-import { ChevronDown, Trash2, X } from "lucide-react";
-import { useState } from "react";
+import { ChevronDown, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { inputClass } from "./BasicInfo";
@@ -25,14 +25,12 @@ import {
   prev,
   updateProgram,
 } from "@/store/baseApi/programSlice/program.slice";
-import { useGetMethodQuery } from "@/store/features/program/programAPI";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  type Control,
-  Controller,
-  useFieldArray,
-  useForm,
-} from "react-hook-form";
+  useGetMethodQuery,
+  useGetSingleMethodQuery,
+} from "@/store/features/program/programAPI";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
 export type TrainingDayType = "PUSH" | "PULL" | "LEGS";
@@ -159,8 +157,8 @@ const defaultMuscles = {
 
 const createDefaultWeek = (weekNumber: number): WeekData => ({
   weekNumber,
-  selectedTrainingDays: [1, 3, 6],
-  restDays: [2, 4, 5, 7],
+  selectedTrainingDays: [1, 3, 5],
+  restDays: [2, 4, 6, 7],
   dayConfigs: [
     {
       day: 1,
@@ -170,8 +168,8 @@ const createDefaultWeek = (weekNumber: number): WeekData => ({
       description: "",
       exerciseHint: "",
       accessories: [{ value: "" }],
-      bfr: false,
-      abs: false,
+      bfr: true,
+      abs: true,
     },
     {
       day: 3,
@@ -181,19 +179,19 @@ const createDefaultWeek = (weekNumber: number): WeekData => ({
       description: "",
       exerciseHint: "",
       accessories: [{ value: "" }],
-      bfr: false,
-      abs: false,
+      bfr: true,
+      abs: true,
     },
     {
-      day: 6,
+      day: 5,
       focus: "Leg",
       selectedMuscles: ["Quads", "Hamstrings", "Calves"],
       method: "Burns",
       description: "",
       exerciseHint: "",
       accessories: [{ value: "" }],
-      bfr: false,
-      abs: false,
+      bfr: true,
+      abs: true,
     },
   ],
 });
@@ -213,7 +211,7 @@ const transformWeeksForStore = (formWeeks: WeekData[]) => {
       description: config.description,
       trainingMethodId: config.method,
       executeHint: config.exerciseHint,
-      accessories: config.accessories.map((a) => a.value).filter(Boolean),
+      accessories: [],
       isEnableBFR: config.bfr,
       isEnableABS: config.abs,
       exercises: [],
@@ -281,63 +279,6 @@ const restoreWeeksFromStore = (
 
 const FieldError = ({ message }: { message?: string }) =>
   message ? <p className={inputClass.error}>{message}</p> : null;
-
-interface AccessoriesFieldProps {
-  control: Control<FormValues>;
-  weekIdx: number;
-  dayIdx: number;
-}
-
-const AccessoriesField = ({
-  control,
-  weekIdx,
-  dayIdx,
-}: AccessoriesFieldProps) => {
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: `weeks.${weekIdx}.dayConfigs.${dayIdx}.accessories`,
-  });
-
-  return (
-    <div className="mb-4">
-      <label className={inputClass.label}>Accessories</label>
-      <div className="space-y-2">
-        {fields.map((field, index) => (
-          <div key={field.id} className="flex gap-2">
-            <Controller
-              control={control}
-              name={`weeks.${weekIdx}.dayConfigs.${dayIdx}.accessories.${index}.value`}
-              render={({ field: inputField }) => (
-                <input
-                  {...inputField}
-                  className={inputClass.input}
-                  placeholder={`Accessory ${index + 1}`}
-                />
-              )}
-            />
-            <button
-              type="button"
-              onClick={() => {
-                if (fields.length > 1) remove(index);
-              }}
-              className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-300 transition-colors shrink-0 self-center"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-        ))}
-      </div>
-
-      <button
-        type="button"
-        onClick={() => append({ value: "" })}
-        className="mt-2 text-sm text-[#A78BFA] cursor-pointer"
-      >
-        + Add Accessory
-      </button>
-    </div>
-  );
-};
 
 const DaySplit = () => {
   const { program } = useAppSelector((state) => state.program);
@@ -415,8 +356,8 @@ const DaySplit = () => {
         description: "",
         exerciseHint: "",
         accessories: [{ value: "" }],
-        bfr: false,
-        abs: false,
+        bfr: true,
+        abs: true,
       };
     });
 
@@ -486,6 +427,25 @@ const DaySplit = () => {
   };
 
   const currentWeek = weeks[activeWeekIndex];
+  const [selectedMethodId, setSelectedMethodId] = useState("");
+  const [activeDayIndex, setActiveDayIndex] = useState<{
+    weekIdx: number;
+    dayIdx: number;
+  } | null>(null);
+
+  const { data: method } = useGetSingleMethodQuery(selectedMethodId, {
+    skip: !selectedMethodId,
+    refetchOnMountOrArgChange: true,
+  });
+
+  useEffect(() => {
+    if (method?.data?.data && activeDayIndex) {
+      setValue(
+        `weeks.${activeDayIndex.weekIdx}.dayConfigs.${activeDayIndex.dayIdx}.description`,
+        method.data.data.shortDescription,
+      );
+    }
+  }, [method]);
 
   return (
     <div>
@@ -710,7 +670,14 @@ const DaySplit = () => {
                           <CommonSelect
                             item={METHOD_TYPES}
                             value={field.value}
-                            onValueChange={field.onChange}
+                            onValueChange={(val) => {
+                              field.onChange(val);
+                              setSelectedMethodId(val);
+                              setActiveDayIndex({
+                                weekIdx: activeWeekIndex,
+                                dayIdx,
+                              });
+                            }}
                             className="w-full"
                           />
                         )}
@@ -754,13 +721,6 @@ const DaySplit = () => {
                     />
                     <FieldError message={dayErrors?.exerciseHint?.message} />
                   </div>
-
-                  {/* Accessories */}
-                  <AccessoriesField
-                    control={control}
-                    weekIdx={activeWeekIndex}
-                    dayIdx={dayIdx}
-                  />
 
                   {/* BFR */}
                   <div className="mb-4">

@@ -131,7 +131,7 @@ export interface WeekSingle {
   days: TrainingDaySingle[];
 }
 
-export type ProgramStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+export type ProgramStatus = "DRAFT" | "PUBLISHED";
 
 export interface Purchase {
   id: string;

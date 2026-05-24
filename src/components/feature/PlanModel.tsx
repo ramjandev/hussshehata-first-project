@@ -80,7 +80,6 @@ const PlanModel: React.FC<PlanModelProps> = ({
   const onSubmit = async (formData: PlanFormValues) => {
     try {
       if (isEdit && editingPlan) {
-        // ✅ Omit both `name` and `plan` for update
         const baseUpdatePayload = {
           priceUSD: formData.priceUSD,
           features: formData.features.map((f) => f.value),
@@ -108,7 +107,6 @@ const PlanModel: React.FC<PlanModelProps> = ({
 
         await updatePlan({ id: editingPlan.id, data: updatePayload }).unwrap();
       } else {
-        // ✅ Full payload for create
         const basePayload = {
           name: formData.name,
           plan: formData.plan,
@@ -156,7 +154,6 @@ const PlanModel: React.FC<PlanModelProps> = ({
         <div className="relative bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="p-8">
-              {/* HEADER */}
               <div className="flex justify-between pb-2">
                 <CommonHeader size="lg">
                   {isEdit ? "Edit" : "Add"} Plan
@@ -166,7 +163,6 @@ const PlanModel: React.FC<PlanModelProps> = ({
               </div>
 
               <div className="border border-darkPurple rounded-2xl p-6 mb-6">
-                {/* NAME */}
                 <div className="mb-6">
                   <label className={inputClass.label}>Plan Name</label>
                   <input
@@ -181,7 +177,6 @@ const PlanModel: React.FC<PlanModelProps> = ({
                   )}
                 </div>
 
-                {/* PRICE */}
                 <div className="mb-6">
                   <label className={inputClass.label}>Price (USD)</label>
                   <input
@@ -198,7 +193,6 @@ const PlanModel: React.FC<PlanModelProps> = ({
                   )}
                 </div>
 
-                {/* PLAN TYPE */}
                 <div className="mb-6">
                   <label className={inputClass.label}>Billing Period</label>
                   <CommonSelect
@@ -232,11 +226,9 @@ const PlanModel: React.FC<PlanModelProps> = ({
                         <input
                           type="checkbox"
                           {...register("isPopular")}
-                          className="w-4 h-4 rounded border-gray-300 text-darkPurple focus:ring-darkPurple"
+                          className="w-4 h-4 rounded-md border-gray-300 accent-[#1447E6]  text-white"
                         />
-                        <span className={inputClass.label}>
-                          Mark as Popular
-                        </span>
+                        <span className={``}>Mark as Popular</span>
                       </label>
                     </div>
                   </>
@@ -260,7 +252,6 @@ const PlanModel: React.FC<PlanModelProps> = ({
                   </div>
                 )}
 
-                {/* FEATURES */}
                 <div>
                   <div className="flex justify-between items-center mb-3">
                     <label className={inputClass.label}>Features</label>
