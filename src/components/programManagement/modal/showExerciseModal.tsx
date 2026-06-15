@@ -133,7 +133,7 @@ const ShowExerciseModal: React.FC<ShowExerciseModalProps> = ({
                 onChange={handleTabChange}
               />
               <TabButton
-                label="ABS Exercise"
+                label="Abs Exercise"
                 value="ABS_EXERCISE"
                 activeValue={exerciseType}
                 onChange={handleTabChange}
@@ -275,6 +275,20 @@ const ShowExerciseModal: React.FC<ShowExerciseModalProps> = ({
                 <div className="flex justify-end mt-10">
                   <button
                     type="button"
+                    onClick={() => {
+                      const lastSet = watchedSets?.[fields.length - 1];
+                      append({
+                        setNumber: fields.length + 1,
+                        reps: lastSet?.reps ?? "05",
+                        restSeconds: lastSet?.restSeconds ?? 60,
+                      } as any);
+                    }}
+                    className="bg-darkPurple cursor-pointer text-white rounded-full p-2 hover:bg-[#7C3AED] transition-colors"
+                  >
+                    <LuPlus className="w-6 h-6" />
+                  </button>
+                  {/* <button
+                    type="button"
                     onClick={() =>
                       append({
                         setNumber: fields.length + 1,
@@ -285,7 +299,7 @@ const ShowExerciseModal: React.FC<ShowExerciseModalProps> = ({
                     className="bg-darkPurple cursor-pointer text-white rounded-full p-2 hover:bg-[#7C3AED] transition-colors"
                   >
                     <LuPlus className="w-6 h-6" />
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>

@@ -32,6 +32,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
+import EmptyState from "./EmptyState";
 
 export type TrainingDayType = "PUSH" | "PULL" | "LEGS";
 
@@ -164,9 +165,9 @@ const createDefaultWeek = (weekNumber: number): WeekData => ({
       day: 1,
       focus: "Push",
       selectedMuscles: ["Chest", "Shoulders", "Triceps"],
-      method: "5×5",
+      method: "",
       description: "",
-      exerciseHint: "",
+      exerciseHint: "Compound Chest Press, Overhead Press, Close-Grip Bench",
       accessories: [{ value: "" }],
       bfr: true,
       abs: true,
@@ -175,9 +176,9 @@ const createDefaultWeek = (weekNumber: number): WeekData => ({
       day: 3,
       focus: "Pull",
       selectedMuscles: ["Back", "Biceps", "Traps"],
-      method: "Max-OT",
+      method: "",
       description: "",
-      exerciseHint: "",
+      exerciseHint: "Barbell Rows, Lat Pulldowns, Face Pulls",
       accessories: [{ value: "" }],
       bfr: true,
       abs: true,
@@ -186,9 +187,9 @@ const createDefaultWeek = (weekNumber: number): WeekData => ({
       day: 5,
       focus: "Leg",
       selectedMuscles: ["Quads", "Hamstrings", "Calves"],
-      method: "Burns",
+      method: "",
       description: "",
-      exerciseHint: "",
+      exerciseHint: "Squats, Deadlifts, Calf Raises",
       accessories: [{ value: "" }],
       bfr: true,
       abs: true,
@@ -354,7 +355,7 @@ const DaySplit = () => {
         selectedMuscles: defaultMuscles[focusType],
         method: methodOptions[index % methodOptions.length].value,
         description: "",
-        exerciseHint: "",
+        exerciseHint: "Compound Chest Press, Overhead Press, Close-Grip Bench",
         accessories: [{ value: "" }],
         bfr: true,
         abs: true,
@@ -403,15 +404,20 @@ const DaySplit = () => {
   };
 
   const handleRemoveWeek = (weekIdx: number) => {
-    const removedWeekNumber = weeks[weekIdx]?.weekNumber;
     removeWeek(weekIdx);
-    setSavedWeeks((prev) => prev.filter((w) => w !== removedWeekNumber));
 
     const newActive = Math.max(
       0,
       activeWeekIndex >= weekIdx ? activeWeekIndex - 1 : activeWeekIndex,
     );
+
     setActiveWeekIndex(newActive);
+
+    setTimeout(() => {
+      const totalWeeks = getValues("weeks").length;
+
+      setSavedWeeks(Array.from({ length: totalWeeks }, (_, i) => i + 1));
+    }, 0);
   };
 
   const dispatch = useAppDispatch();
@@ -447,6 +453,12 @@ const DaySplit = () => {
     }
   }, [method]);
 
+  if (!program)
+    return (
+      <div>
+        <EmptyState message="Program data is required for Day Split configuration" />
+      </div>
+    );
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -456,8 +468,9 @@ const DaySplit = () => {
           {savedWeeks.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {weekFields.map((field, idx) => {
-                const weekNum = weeks[idx]?.weekNumber;
+                const weekNum = idx + 1;
                 const isSaved = savedWeeks.includes(weekNum);
+
                 return (
                   <button
                     key={field.id}
@@ -669,7 +682,7 @@ const DaySplit = () => {
                         render={({ field }) => (
                           <CommonSelect
                             item={METHOD_TYPES}
-                            value={field.value}
+                            value={(field.value || undefined) as string}
                             onValueChange={(val) => {
                               field.onChange(val);
                               setSelectedMethodId(val);
@@ -679,6 +692,7 @@ const DaySplit = () => {
                               });
                             }}
                             className="w-full"
+                            placeholder="Select Method"
                           />
                         )}
                       />

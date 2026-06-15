@@ -125,9 +125,18 @@ const ProgramDetail = () => {
           </div>
 
           <div className="space-y-4">
-            {p.weeks?.map((week, index) => (
+            {[...(p.weeks ?? [])]
+              .sort((a, b) => {
+                const numA = parseInt(a.name.replace(/\D+/g, ""));
+                const numB = parseInt(b.name.replace(/\D+/g, ""));
+                return numA - numB;
+              })
+              .map((week, index) => (
+                <WeekCard key={week.id} week={week} index={index} />
+              ))}
+            {/* {p.weeks?.map((week, index) => (
               <WeekCard key={week.id} week={week} index={index} />
-            ))}
+            ))} */}
           </div>
         </div>
       ) : (

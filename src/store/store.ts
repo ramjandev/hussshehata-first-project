@@ -15,7 +15,6 @@ import authReducer from "./baseApi/auth/auth.slice";
 import { baseAPI } from "./baseApi/baseApi";
 import programReducer from "./baseApi/programSlice/program.slice";
 
-// Persist configs
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -24,9 +23,11 @@ const authPersistConfig = {
 const programPersistConfig = {
   key: "program",
   storage,
+  whitelist: ["program"],
 };
 
 const persistedAuthReducer = persistReducer(authPersistConfig, authReducer);
+
 const persistedProgramReducer = persistReducer(
   programPersistConfig,
   programReducer,
@@ -48,4 +49,5 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
 export const persistor = persistStore(store);

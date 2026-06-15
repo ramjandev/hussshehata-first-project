@@ -18,9 +18,7 @@ const SetTable: React.FC<ExerciseSetProps> = ({ sets }) => {
             <th className="px-4 py-3 text-center text-xs font-semibold">
               Reps
             </th>
-            <th className="px-4 py-3 text-center text-xs font-semibold">
-              Weight (lbs)
-            </th>
+
             <th className="px-4 py-3 text-center text-xs font-semibold">
               Rest
             </th>
@@ -40,9 +38,7 @@ const SetTable: React.FC<ExerciseSetProps> = ({ sets }) => {
               <td className="px-4 py-3 text-sm font-medium text-black ">
                 {set.reps}
               </td>
-              <td className="px-4 py-3 text-sm font-medium text-black ">
-                {set.weight}
-              </td>
+
               <td className="px-4 py-3 text-sm text-black font-medium ">
                 {set.rest}sec
               </td>

@@ -9,6 +9,7 @@ import {
 } from "@/store/baseApi/programSlice/program.slice";
 import { useCreateProgramMutation } from "@/store/features/program/programAPI";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
+import EmptyState from "./EmptyState";
 
 const Review = () => {
   const { program } = useAppSelector((state) => state.program);
@@ -29,9 +30,15 @@ const Review = () => {
       console.log(error);
     }
   };
-  console.log(program);
 
-  return program ? (
+  if (!program)
+    return (
+      <div>
+        <EmptyState message="Program data is required for review" />
+      </div>
+    );
+
+  return (
     <div className="">
       <div className="">
         <SectionHeader
@@ -61,7 +68,7 @@ const Review = () => {
                 </span>
 
                 <span className="text-sm text-gray-900">
-                  {program.weeks.length} weeks
+                  {program?.weeks?.length ?? 0} weeks
                 </span>
               </div>
 
@@ -71,7 +78,7 @@ const Review = () => {
                 </span>
 
                 <span className="text-sm text-gray-900">
-                  {program.description}
+                  {program?.description}
                 </span>
               </div>
 
@@ -82,7 +89,7 @@ const Review = () => {
                   </span>
 
                   <div className="flex flex-wrap gap-2">
-                    {program.features.map((feature, index) => (
+                    {program.features?.map((feature, index) => (
                       <span
                         key={index}
                         className="text-xs px-2 py-1 rounded bg-[#F3F0FF] text-gray-900"
@@ -101,7 +108,7 @@ const Review = () => {
                   </span>
 
                   <div className="flex flex-wrap gap-2">
-                    {program.tags.map((tag, index) => (
+                    {program.tags?.map((tag, index) => (
                       <span
                         key={index}
                         className="text-xs px-2 py-1 rounded bg-[#F3F0FF] text-gray-900"
@@ -117,7 +124,7 @@ const Review = () => {
 
           {/* Weeks */}
           <div className="border border-blue rounded-lg p-4">
-            {program.weeks.map((week, weekIndex) => (
+            {program.weeks?.map((week, weekIndex) => (
               <div key={weekIndex} className="">
                 <h3 className="text-base font-semibold text-gray-900 border-b border-[#A78BFA]/50 pb-2.5">
                   {week.name}
@@ -150,7 +157,7 @@ const Review = () => {
                 </div>
 
                 {/* Days */}
-                {week.days.map((day, _dayIndex) => (
+                {week.days?.map((day, _dayIndex) => (
                   <div
                     key={`week-${weekIndex}-day-${day.dayNumber}`}
                     className="mb-6 p-4 border-b border-[#A78BFA]/50"
@@ -215,7 +222,7 @@ const Review = () => {
 
                         {/* Exercises */}
                         <div className="space-y-4 mt-4">
-                          {day.exercises.map((exercise, exerciseIndex) => (
+                          {day.exercises?.map((exercise, exerciseIndex) => (
                             <div
                               key={exerciseIndex}
                               className="border border-[#A78BFA]/30 rounded-lg p-3"
@@ -276,7 +283,7 @@ const Review = () => {
 
                               {/* Workout Sets */}
                               <div className="mt-3 space-y-2">
-                                {exercise.sets.map((set, setIndex) => (
+                                {exercise.sets?.map((set, setIndex) => (
                                   <div
                                     key={setIndex}
                                     className="flex flex-wrap gap-3 text-sm"
@@ -288,16 +295,6 @@ const Review = () => {
 
                                       <span className="text-gray-900 ml-1">
                                         {set.sequence}
-                                      </span>
-                                    </div>
-
-                                    <div>
-                                      <span className="text-gray-600">
-                                        Weight:
-                                      </span>
-
-                                      <span className="text-gray-900 ml-1">
-                                        {set.weight}
                                       </span>
                                     </div>
 
@@ -350,8 +347,6 @@ const Review = () => {
         </div>
       </div>
     </div>
-  ) : (
-    <p className=" text-center">Please create program to view review</p>
   );
 };
 
