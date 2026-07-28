@@ -4,6 +4,7 @@ export type MethodPayload = {
   relatedDescription: string;
   defaultSet: number;
   defaultReps: number;
+  defaultRest: number;
 };
 
 export interface TTrainingMethod {
@@ -13,6 +14,7 @@ export interface TTrainingMethod {
   relatedDescription: string;
   defaultSet: number;
   defaultReps: number;
+  defaultRest: number;
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
@@ -38,6 +40,7 @@ interface TrainingMethod {
   relatedDescription: string;
   defaultSet: number;
   defaultReps: number;
+  defaultRest: number;
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;

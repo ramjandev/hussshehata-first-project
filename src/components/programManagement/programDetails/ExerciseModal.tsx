@@ -16,6 +16,7 @@ export const exerciseSchema = z.object({
   description: z.string().min(1, "Description is required"),
   defaultSet: z.number().min(1, "Minimum 1 set required"),
   defaultReps: z.number().min(1, "Minimum 1 rep required"),
+  defaultRest: z.number().min(1, "Minimum 1 second required"),
 });
 
 export type ExercisePayload = z.infer<typeof exerciseSchema>;
@@ -43,6 +44,7 @@ const ExerciseModal: React.FC<Props> = ({ isOpen, onClose, defaultValues }) => {
       description: defaultValues?.description ?? "",
       defaultSet: defaultValues?.defaultSet ?? 1,
       defaultReps: defaultValues?.defaultReps ?? 1,
+      defaultRest: defaultValues?.sets[0]?.rest ?? 1,
     },
   });
 
@@ -55,6 +57,7 @@ const ExerciseModal: React.FC<Props> = ({ isOpen, onClose, defaultValues }) => {
         description: defaultValues.description ?? "",
         defaultSet: defaultValues.defaultSet,
         defaultReps: defaultValues.defaultReps,
+        defaultRest: defaultValues.sets[0]?.rest ?? 1,
       });
     }
   }, [isOpen, defaultValues, reset]);
@@ -127,6 +130,16 @@ const ExerciseModal: React.FC<Props> = ({ isOpen, onClose, defaultValues }) => {
             className={inputClass.input}
           />
           <p className={inputClass.error}>{errors.defaultReps?.message}</p>
+        </div>
+        <div>
+          <label className={inputClass.label}>Default Rest</label>
+          <input
+            type="number"
+            placeholder="Default Rest"
+            {...register("defaultRest", { valueAsNumber: true })}
+            className={inputClass.input}
+          />
+          <p className={inputClass.error}>{errors.defaultRest?.message}</p>
         </div>
 
         <div className="flex justify-end gap-3 pt-5">

@@ -23,14 +23,11 @@ const inputClass = {
 
 const methodSchema = z.object({
   name: z.string().min(1, "Method name is required"),
-
   shortDescription: z.string().min(1, "Short description is required"),
-
   relatedDescription: z.string().min(1, "Related description is required"),
-
   defaultSet: z.number().min(1, "Default set is required"),
-
   defaultReps: z.number().min(1, "Default reps is required"),
+  defaultRest: z.number().min(1, "Default rest is required"),
 });
 
 type MethodFormValues = z.infer<typeof methodSchema>;
@@ -58,14 +55,11 @@ const ShowMethodModal: React.FC<ShowMethodModalProps> = ({
 
     defaultValues: {
       name: selectMethod?.name || "",
-
       shortDescription: selectMethod?.shortDescription || "",
-
       relatedDescription: selectMethod?.relatedDescription || "",
-
       defaultSet: selectMethod?.defaultSet || 0,
-
       defaultReps: selectMethod?.defaultReps || 0,
+      defaultRest: selectMethod?.defaultRest || 0,
     },
   });
 
@@ -77,6 +71,7 @@ const ShowMethodModal: React.FC<ShowMethodModalProps> = ({
         relatedDescription: data.relatedDescription,
         defaultSet: data.defaultSet,
         defaultReps: data.defaultReps,
+        defaultRest: data.defaultRest,
       };
 
       if (selectMethod) {
@@ -189,6 +184,22 @@ const ShowMethodModal: React.FC<ShowMethodModalProps> = ({
 
               {errors.defaultReps && (
                 <p className={inputClass.error}>{errors.defaultReps.message}</p>
+              )}
+            </div>
+            <div>
+              <label className={inputClass.label}>Default Rest</label>
+
+              <input
+                type="number"
+                placeholder="e.g., 12"
+                className={inputClass.input}
+                {...register("defaultRest", {
+                  valueAsNumber: true,
+                })}
+              />
+
+              {errors.defaultRest && (
+                <p className={inputClass.error}>{errors.defaultRest.message}</p>
               )}
             </div>
           </div>

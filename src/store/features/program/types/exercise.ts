@@ -44,3 +44,10 @@ export interface DashboardCardStartResponse {
   path: string;
   method: string;
 }
+
+export interface CreateWorkoutSetPayload {
+  exerciseId: string;
+  weight: number;
+  reps: number;
+  rest: number;
+}

@@ -10,6 +10,7 @@ import type {
 } from "./types/analytic";
 import type { DeletedProgrammeResponse } from "./types/deletePrgraom";
 import type {
+  CreateWorkoutSetPayload,
   DashboardCardStartResponse,
   SingleExerciseResponse,
   WeekBody,
@@ -171,7 +172,7 @@ export const programAPI = baseAPI.injectEndpoints({
         url: `/new-exercise/${id}`,
         method: "GET",
       }),
-      providesTags: ["exercises"],
+      providesTags: (_, __, id) => [{ type: "exercises", id }],
     }),
     addImage: build.mutation<void, { id: string; data: FormData }>({
       query: (data) => ({
@@ -179,7 +180,10 @@ export const programAPI = baseAPI.injectEndpoints({
         method: "PATCH",
         body: data.data,
       }),
-      invalidatesTags: ["programs", "exercises"],
+      invalidatesTags: (_, __, { id }) => [
+        { type: "exercises", id },
+        "programs",
+      ],
     }),
     AddAnimation: build.mutation<void, { id: string; data: FormData }>({
       query: (data) => ({
@@ -187,7 +191,10 @@ export const programAPI = baseAPI.injectEndpoints({
         method: "PATCH",
         body: data.data,
       }),
-      invalidatesTags: ["programs", "exercises"],
+      invalidatesTags: (_, __, { id }) => [
+        { type: "exercises", id },
+        "programs",
+      ],
     }),
     updateExercise: build.mutation<
       void,
@@ -198,7 +205,11 @@ export const programAPI = baseAPI.injectEndpoints({
         method: "PATCH",
         body: data.data,
       }),
-      invalidatesTags: ["programs", "exercises"],
+
+      invalidatesTags: (_, __, { exerciseId }) => [
+        { type: "exercises", id: exerciseId },
+        { type: "programs", id: "LIST" },
+      ],
     }),
     updateDay: build.mutation<void, { dayId: string; data: DayPayload }>({
       query: (data) => ({
@@ -244,7 +255,21 @@ export const programAPI = baseAPI.injectEndpoints({
         url: `/admin-dashboard-analytics/getProgrammeAnalytics`,
         method: "GET",
       }),
-      providesTags: ["exercises"],
+    }),
+    addSet: build.mutation<void, CreateWorkoutSetPayload>({
+      query: (data) => ({
+        url: `/new-exercise-set`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["exercises", "programs"],
+    }),
+    deleteSet: build.mutation<void, string>({
+      query: (id) => ({
+        url: `/new-exercise-set/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["exercises", "programs"],
     }),
   }),
 });
@@ -271,6 +296,10 @@ export const {
   useAddAnimationMutation,
   useUpdateExerciseMutation,
   useUpdateDayMutation,
+
+  //set
+  useAddSetMutation,
+  useDeleteSetMutation,
   //program
   useUpdateProgramBasicMutation,
   useDeleteProgramMutation,

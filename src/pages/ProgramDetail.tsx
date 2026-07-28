@@ -134,9 +134,6 @@ const ProgramDetail = () => {
               .map((week, index) => (
                 <WeekCard key={week.id} week={week} index={index} />
               ))}
-            {/* {p.weeks?.map((week, index) => (
-              <WeekCard key={week.id} week={week} index={index} />
-            ))} */}
           </div>
         </div>
       ) : (
