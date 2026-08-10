@@ -9,9 +9,6 @@ import { z } from "zod";
 import { inputClass } from "../modal/showExerciseModal";
 
 const addSetSchema = z.object({
-  weight: z
-    .number({ error: "Weight is required" })
-    .positive("Weight must be greater than 0"),
   reps: z
     .number({ error: "Reps is required" })
     .int("Reps must be a whole number")
@@ -40,18 +37,17 @@ const AddSetModal: React.FC<Props> = ({ isOpen, onClose, exerciseId }) => {
     reset,
   } = useForm<AddSetFormValues>({
     resolver: zodResolver(addSetSchema),
-    defaultValues: { weight: undefined, reps: undefined, rest: undefined },
+    defaultValues: { reps: undefined, rest: undefined },
   });
 
-  // reset form whenever the modal opens fresh for a (possibly new) exercise
   useEffect(() => {
     if (isOpen) {
-      reset({ weight: undefined, reps: undefined, rest: undefined });
+      reset({ reps: undefined, rest: undefined });
     }
   }, [isOpen, exerciseId, reset]);
 
   const submitHandler = async (data: AddSetFormValues) => {
-    if (!exerciseId) return; // guard, shouldn't happen if isOpen is gated correctly
+    if (!exerciseId) return;
     try {
       await addSet({ exerciseId, ...data }).unwrap();
       onClose();
@@ -65,18 +61,6 @@ const AddSetModal: React.FC<Props> = ({ isOpen, onClose, exerciseId }) => {
   return (
     <ModalContainer title="Add Set" onClose={onClose} size="2xl">
       <form onSubmit={handleSubmit(submitHandler)} className="space-y-3">
-        <div>
-          <label className={inputClass.label}>Weight (kg)</label>
-          <input
-            type="number"
-            step="0.1"
-            placeholder="e.g., 80.5"
-            {...register("weight", { valueAsNumber: true })}
-            className={inputClass.input}
-          />
-          <p className={inputClass.error}>{errors.weight?.message}</p>
-        </div>
-
         <div>
           <label className={inputClass.label}>Reps</label>
           <input

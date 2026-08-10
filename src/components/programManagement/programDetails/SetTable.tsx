@@ -10,7 +10,7 @@ interface ExerciseSetProps {
 
 const SetTable: React.FC<ExerciseSetProps> = ({ sets }) => {
   if (!sets.length) return null;
-  const [deleteSet] = useDeleteSetMutation();
+  const [deleteSet, { originalArgs }] = useDeleteSetMutation();
   const [isSetOpen, setIsSetOpen] = useState(false);
   const [selectedSetId, setSelectedSetId] = useState<string | null>(null);
 
@@ -78,6 +78,7 @@ const SetTable: React.FC<ExerciseSetProps> = ({ sets }) => {
                       variant="delete"
                       className="px-2! py-1! text-[12px]!"
                       onClick={() => handleDelete(set.id)}
+                      isDelete={originalArgs === set.id}
                     >
                       Delete
                     </ActionButton>

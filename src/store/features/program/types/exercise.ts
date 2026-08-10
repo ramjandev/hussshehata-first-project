@@ -47,7 +47,6 @@ export interface DashboardCardStartResponse {
 
 export interface CreateWorkoutSetPayload {
   exerciseId: string;
-  weight: number;
   reps: number;
   rest: number;
 }
