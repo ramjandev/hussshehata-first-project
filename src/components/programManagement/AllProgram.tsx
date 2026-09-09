@@ -157,7 +157,7 @@ const AllProgram = () => {
                         ) : (
                           <>
                             <FaCrown className="w-4 h-4" />
-                            {!program.isPremium ? "Make basic" : "Make premium"}
+                            {!program.isPremium ? "Make premium" : "Make basic"}
                           </>
                         )}
                       </ActionButton>

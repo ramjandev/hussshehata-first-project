@@ -106,13 +106,13 @@ const ProgramDetail = () => {
                   {p.description}
                 </CommonHeader>
 
-                <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5 w-full ">
+                <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 w-full ">
                   {[
                     { label: "Weeks", value: p.weeks?.length || 0 },
                     { label: "Training Days", value: totalTrainingDays },
                     { label: "Rest Days", value: totalRestDays },
                     { label: "Fitness Level", value: "Intermediate" },
-                    { label: "Fitness Level", value: "Intermediate" },
+                  
                   ].map((item, i) => (
                     <div key={i} className="rounded-xl  bg-[#A78BFA] p-3">
                       <p className="text-xs text-white mb-6">{item.label}</p>
