@@ -9,7 +9,7 @@ interface BaseQueryExtraOptions {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://api.monsterconfusion.com",
+  baseUrl: "https://api.monsterconfusion.com/api/v1",
   // credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.accessToken;
