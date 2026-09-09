@@ -53,7 +53,7 @@ const SetTable: React.FC<ExerciseSetProps> = ({ sets }) => {
                 }`}
               >
                 <td className="px-4 py-3 text-sm font-medium text-black">
-                  {set.sequence}
+                  {index + 1}
                 </td>
                 <td className="px-4 py-3 text-sm font-medium text-black ">
                   {set.reps}

@@ -9,11 +9,13 @@ import {
 import { useAppDispatch } from "@/store/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { z } from "zod";
+
+const REMEMBER_KEY = "admin_remembered_credentials";
 
 const loginSchema = z.object({
   email: z
@@ -38,6 +40,7 @@ const Login = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -48,8 +51,36 @@ const Login = () => {
     },
   });
 
+  // 1. AUTO-FILL CREDENTIALS ON COMPONENT LOAD
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(REMEMBER_KEY);
+      if (saved) {
+        const { email, password } = JSON.parse(saved);
+        if (email) setValue("email", email);
+        if (password) setValue("password", password);
+        setValue("rememberMe", true);
+      }
+    } catch {
+      // Ignore parse error
+    }
+  }, [setValue]);
+
   const onSubmit = async (data: LoginFormValues) => {
     try {
+      // 2. SAVE OR REMOVE CREDENTIALS BASED ON "REMEMBER ME"
+      if (data.rememberMe) {
+        localStorage.setItem(
+          REMEMBER_KEY,
+          JSON.stringify({
+            email: data.email,
+            password: data.password, // Saved so form auto-fills next time
+          }),
+        );
+      } else {
+        localStorage.removeItem(REMEMBER_KEY);
+      }
+
       const res = await login({
         email: data.email,
         password: data.password,
@@ -58,6 +89,7 @@ const Login = () => {
       dispatch(setAccessToken(res.data.accessToken));
       dispatch(setRefreshToken(res.data.refreshToken));
       dispatch(setUser(res));
+
       if (
         res.data.user.role === "ADMIN" ||
         res.data.user.role === "SUPERADMIN"
@@ -66,8 +98,9 @@ const Login = () => {
       } else {
         toast.error("You are not authorized to access this page.");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login failed:", error);
+      toast.error(error?.data?.message || "Login failed. Please try again.");
     }
   };
 
@@ -94,6 +127,8 @@ const Login = () => {
               <input
                 {...register("email")}
                 type="email"
+                name="email"
+                autoComplete="username"
                 placeholder="admin@example.com"
                 className={`w-full pl-10 pr-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black ${
                   errors.email
@@ -119,6 +154,8 @@ const Login = () => {
               <input
                 {...register("password")}
                 type={showPassword ? "text" : "password"}
+                name="password"
+                autoComplete="current-password"
                 placeholder="••••••••"
                 className={`w-full pl-10 pr-10 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black ${
                   errors.password
@@ -147,11 +184,11 @@ const Login = () => {
 
           {/* Options */}
           <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 {...register("rememberMe")}
                 type="checkbox"
-                className="rounded border-gray-300"
+                className="rounded border-gray-300 cursor-pointer"
               />
               Remember me
             </label>
@@ -170,7 +207,7 @@ const Login = () => {
 
         {/* Footer */}
         <p className="text-center text-xs text-gray-400 mt-6">
-          © 2026 Admin Panel
+          © {new Date().getFullYear()} Admin Panel
         </p>
       </div>
     </div>
